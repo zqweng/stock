@@ -1,7 +1,23 @@
 """
 when you import
 """
-
+import os
+import pandas as pd
 import update_history
+import stock_library
+import pdb
 
-update_history.load_history('/home/johnny/python/csv/', 'mystocklist-detail.csv')
+project_path = os.getcwd()
+#pdb.set_trace()
+
+stock_list_file = project_path + '/mystocklist-detail.csv'
+history_dir = '/home/johnny/python/csv/'
+#update_history.load_history(history_dir, stock_list_file)
+
+df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
+
+if df.empty:
+    print('no stock list, quit')
+
+result_df = stock_library.day_k_cross(df, history_dir, 3)
+print(result_df.to_string())
