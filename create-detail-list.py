@@ -21,4 +21,4 @@ else:
     df = pd.read_csv(mystock_file)
 
 new_df = df_all[df_all['name'].isin(df['名称'])]
-new_df.to_csv('mystocklist-detail.csv', encoding='ansi')
+new_df.to_csv('mystocklist-detail.csv', encoding='utf-8')
