@@ -21,9 +21,9 @@ import os
 
 #hist_dir = '/home/johnny/python/csv/'
 #stock_list_file = 'mystocklist-detail.csv'
-default_start_date = '2017-01-01'
 
 def load_history(hist_dir, stock_list_file):
+    default_start_date = '2017-01-01'
     if not os.path.isfile(stock_list_file):
         print('股票清单 not exist, create one')
         quit()
@@ -71,4 +71,5 @@ def load_history(hist_dir, stock_list_file):
 
         df_stock_joined.to_csv(stock_code + '.csv')
 
-load_history('/home/johnny/python/csv/', 'mystocklist-detail.csv')
+if __name__ == "__main__":
+    load_history('/home/johnny/python/csv/', 'mystocklist-detail.csv')
