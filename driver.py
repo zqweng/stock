@@ -5,9 +5,9 @@ import os
 import pandas as pd
 import update_history
 import stock_library as mylib
+from pathlib import Path
 import pdb
 
-project_path = os.getcwd()
 result_string = ''
 # pdb.set_trace()
 
@@ -15,7 +15,7 @@ stock_list_file = project_path + '/mystocklist-detail.csv'
 history_dir = '/home/johnny/python/csv/'
 #update_history.load_history(history_dir, stock_list_file)
 
-df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
+df = pd.read_csv(Path().joinpath(stock_list_file), converters={'code': lambda x: str(x)})
 
 if df.empty:
     print('no stock list, quit')
