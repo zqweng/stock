@@ -1,8 +1,8 @@
-"""v3, add a chinese stock name to output file
-       set encoding='ansi' for the output csv file 
 """
+   v3, add a chinese stock name to output file
+       set encoding='ansi' for the output csv file 
 
-"""Pandas dtype	Python type	NumPy type	Usage
+   Pandas dtype	Python type	NumPy type	Usage
    object	str	string_, unicode_	Text
    int64	int	int_, int8, int16, int32, int64, uint8, uint16, uint32, uint64	Integer numbers
    float64	float	float_, float16, float32, float64	Floating point numbers
@@ -10,16 +10,17 @@
    datetime64	NA	datetime64[ns]	Date and time values
    timedelta[ns]	NA	NA	Differences between two datetimes
    category	NA	NA	Finite list of text values
-"""
 
-"""
-using a dic to define a row, and create a dataframe using an array of dic 
-row1 = {'a':5,'b':6,'c':7,'d':'A'}
-row2 = {'a':8,'b':9,'c':10,'d':'B'}
-row3 = {'a':11,'b':12,'c':13,'d':'C'}
-df = pd.DataFrame([row1,row2,row3])
-"""
+    using a dic to define a row, and create a dataframe using an array of dic
+    row1 = {'a':5,'b':6,'c':7,'d':'A'}
+    row2 = {'a':8,'b':9,'c':10,'d':'B'}
+    row3 = {'a':11,'b':12,'c':13,'d':'C'}
+    df = pd.DataFrame([row1,row2,row3])
 
+    when you write a library, the external symbols used by the library code needs to be imported first.
+    For example, the main python file imports pandas library and it calls the function which needs pandas in this library and it will
+    still fails if this library does not import pandas itself.
+"""
 import datetime
 import os
 import pandas as pd
