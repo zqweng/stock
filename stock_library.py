@@ -27,6 +27,33 @@ import pandas as pd
 import pdb
 
 
+def resample(tick_df, resample_intv, date_val):
+    tick_df['time'] = date_val + ' ' + tick_df['time']
+    tick_df['time'] = pd.to_datetime(tick_df['time'])
+    tick_df = tick_df.set_index('time')
+
+    new_tick_df = tick_df['price'].resample(resample_intv).ohlc()
+    new_tick_df = new_tick_df.dropna()
+    vols = tick_df['volume'].resample(resample_intv).sum()
+    vols = vols.dropna()
+    vol_df = pd.DataFrame(vols, columns=['volume'])
+    amounts = tick_df['amount'].resample(resample_intv).sum()
+    amounts = amounts.dropna()
+    amount_df = pd.DataFrame(amounts, columns=['amount'])
+    newdf = new_tick_df.merge(vol_df, left_index=True,
+                              right_index=True).merge(amount_df,
+                                                      left_index=True,
+                                                      right_index=True)
+    new_file_name = date_val + '-' + resample_intv + '.csv'
+    # newdf.to_csv(new_file_name)
+    if newdf is None:
+        print('create resample df fail ', date_val, 'for stock', stock_code)
+        return None
+    else:
+        # print('successfully created a file ', new_file_name)
+        return newdf
+
+
 def day_lower_shadow_line(row):
     if row.open >= row.close:
         return 0
