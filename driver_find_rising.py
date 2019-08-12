@@ -16,6 +16,9 @@ import pandas as pd
 import stock_library as mylib
 import pdb
 
+def plot_k_line(df):
+
+
 
 start_date = '2019-07-15'
 end_date = '2019-07-19'
