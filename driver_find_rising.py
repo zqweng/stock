@@ -14,16 +14,13 @@ from pathlib import Path
 import os
 import pandas as pd
 import stock_library as mylib
+import drawing_library as mydraw
 import pdb
 
-def plot_k_line(df):
-
-
-
-start_date = '2019-07-15'
-end_date = '2019-07-19'
+start_date = '2019-07-8'
+end_date = '2019-07-25'
 stock_list_file = 'mystocklist-detail.csv'
-resample_intv = '15min'
+resample_intv = '60min'
 
 df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
 
@@ -61,6 +58,7 @@ for row in df.itertuples():
 
         if not df_general.empty:
             df_general.sort_index(ascending=1, inplace=True)
+            mydraw.draw_k_lines(df_general)
 
 
 
