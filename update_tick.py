@@ -2,11 +2,14 @@ import pandas as pd
 import tushare as ts
 import os
 import pdb
+from pathlib import Path
+
 """
 go to the tick_dir and create dir for 
 """
 
-def load_tick(tick_dir, stock_list_file, start_date, end_date):
+
+def load_tick(stock_list_file, start_date, end_date):
     if not os.path.isfile(stock_list_file):
         print('股票清单 not exist, create one')
         quit()
@@ -14,19 +17,21 @@ def load_tick(tick_dir, stock_list_file, start_date, end_date):
         print('股票清单 exists, load it')
         df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
 
+    tick_dir = Path().joinpath('..', '..', 'stockdata')
+    timeRange = pd.date_range(start=start_date, end=end_date).strftime('%Y-%m-%d')
+
     for row in df.itertuples():
-       if not os.path.exists(os.path.join(tick_dir,row.code)):
-            os.mkdir(os.path.join(tick_dir,row.code))
-            print('Directory', os.path.join(tick_dir,row.code), 'Created')
+        dir_path = os.path.join(tick_dir, row.code)
+        if not os.path.exists(dir_path):
+            os.mkdir(dir_path)
+            print('Directory', os.path.join(tick_dir, row.code), 'Created')
 
-        tick_df = ts.get_tick_data(stock_code, date=date_val, src='tt')
-
-        if tick_df is None:
-            print('history data on date ', date_val, 'for stock', stock_code, 'failed to retrieve')
-            continue
-
-        tick_df.to_csv(date_val + '.csv')
-
-
+        for date_val in timeRange:
+            file_name = os.path.join(tick_dir, row.code, date_val + '.csv')
+            if not os.path.exists(file_name):
+                df_tick = ts.get_tick_data(row.code, date_val, src='tt')
+                if df_tick is not None:
+                    df_tick.to_csv(file_name)
 
 
+load_tick('mystocklist-detail.csv', '2019-07-01', '2019-08-15')
