@@ -20,5 +20,15 @@ else:
     print('自选股票清单, exist, load it')
     df = pd.read_csv(mystock_file)
 
+new_df = pd.DataFrame()
+for row in df.itertuples():
+    found = False
+    for row_all in df_all.itertuples():
+        if row_all.name == row.名称:
+            found = True
+            break
+    if not found:
+        print (row.名称)
+
 new_df = df_all[df_all['name'].isin(df['名称'])]
-new_df.to_csv('mystocklist-detail.csv', encoding='utf-8')
+new_df.to_csv('mystocklist-detail.csv')

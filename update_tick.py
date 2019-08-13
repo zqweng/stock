@@ -34,4 +34,4 @@ def load_tick(stock_list_file, start_date, end_date):
                     df_tick.to_csv(file_name)
 
 
-load_tick('mystocklist-detail.csv', '2019-07-01', '2019-08-15')
+load_tick('mystocklist-detail.csv', '2019-01-01', '2019-08-15')

@@ -16,6 +16,7 @@ Update the stock history files specified by stock_list_file. stock history files
 """
 
 import pandas as pd
+from pathlib import Path
 import tushare as ts
 import os
 
@@ -72,4 +73,5 @@ def load_history(hist_dir, stock_list_file):
         df_stock_joined.to_csv(stock_code + '.csv')
 
 if __name__ == "__main__":
-    load_history('/home/johnny/python/csv/', 'mystocklist-detail.csv')
+    tick_dir = Path().joinpath('..', '..', 'stockdata')
+    load_history(tick_dir, 'mystocklist-detail.csv')

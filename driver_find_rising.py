@@ -17,20 +17,22 @@ import stock_library as mylib
 import drawing_library as mydraw
 import pdb
 
-start_date = '2019-07-8'
-end_date = '2019-07-25'
+start_date = '2019-01-1'
+end_date = '2019-08-25'
 stock_list_file = 'mystocklist-detail.csv'
 resample_intv = '60min'
 
 df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
-
+#stock_name = '三全食品'
+#stock_name = '博通集成'
+stock_name = '金健米业'
 for row in df.itertuples():
-    if row.name == '博通集成':
+    if row.name == stock_name:
         """
         stock history file and stock tick file for each are under the same directory of ../../stockdata/stock_code/
         """
         stock_trade_file = row.code + '.csv'
-        file_path = Path().joinpath('..', '..', 'stockdata', row.code)
+        file_path = Path().joinpath('..', '..', 'stockdata')
         file_with_full_path = os.path.join(file_path,stock_trade_file)
         #pdb.set_trace()
         df_stock = pd.read_csv(file_with_full_path, parse_dates=['date'])
@@ -41,7 +43,7 @@ for row in df.itertuples():
         for row_new in df_stock_new.itertuples():
             date_val = row_new.date.strftime('%Y-%m-%d')
             tick_file_name = date_val + '.csv'
-            tick_file_with_full_path = os.path.join(file_path, tick_file_name)
+            tick_file_with_full_path = os.path.join(file_path, row.code, tick_file_name)
             df_tick = pd.read_csv(tick_file_with_full_path)
             #pdb.set_trace()
             if df_tick.empty:
