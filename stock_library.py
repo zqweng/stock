@@ -26,6 +26,7 @@ import os
 import pandas as pd
 import pdb
 
+
 def resampl_by_hour(tick_df, resample_intv, date_val):
     tick_df['time'] = date_val + ' ' + tick_df['time']
     tick_df['time'] = pd.to_datetime(tick_df['time'])
@@ -54,17 +55,13 @@ def resampl_by_hour(tick_df, resample_intv, date_val):
         return newdf
 
 
-def resample(tick_df, resample_intv, date_val):
-    tick_df['time'] = date_val + ' ' + tick_df['time']
-    tick_df['time'] = pd.to_datetime(tick_df['time'])
-    tick_df = tick_df.set_index('time')
-
-    new_tick_df = tick_df['price'].resample(resample_intv).ohlc()
+def resample_local(tick_df, resample_intv, date_val, loffset_val='0min'):
+    new_tick_df = tick_df['price'].resample(resample_intv, loffset=loffset_val).ohlc()
     new_tick_df = new_tick_df.dropna()
-    vols = tick_df['volume'].resample(resample_intv).sum()
+    vols = tick_df['volume'].resample(resample_intv, loffset=loffset_val).sum()
     vols = vols.dropna()
     vol_df = pd.DataFrame(vols, columns=['volume'])
-    amounts = tick_df['amount'].resample(resample_intv).sum()
+    amounts = tick_df['amount'].resample(resample_intv, loffset=loffset_val).sum()
     amounts = amounts.dropna()
     amount_df = pd.DataFrame(amounts, columns=['amount'])
     newdf = new_tick_df.merge(vol_df, left_index=True,
@@ -81,6 +78,23 @@ def resample(tick_df, resample_intv, date_val):
         return newdf
 
 
+def resample(tick_df, resample_intv, date_val):
+    tick_df['time'] = date_val + ' ' + tick_df['time']
+    tick_df['time'] = pd.to_datetime(tick_df['time'])
+    tick_df = tick_df.set_index('time')
+
+    if resample_intv == '60min':
+        startTime = tick_df.index[0]
+        tick_df_morning = tick_df[(tick_df.index - startTime).seconds < 10000]
+        tick_df_morning = resample_local(tick_df_morning, resample_intv, date_val, '30min')
+        tick_df_afternoon = tick_df[(tick_df.index - startTime).seconds >= 10000]
+        tick_df_afternoon = resample_local(tick_df_afternoon, resample_intv, date_val)
+        return pd.concat([tick_df_morning, tick_df_afternoon])
+
+    else:
+        return resample_local(tick_df, resample_intv, date_val)
+
+
 def day_lower_shadow_line(row):
     if row.open >= row.close:
         return 0
@@ -93,13 +107,14 @@ def day_lower_shadow_line(row):
 
     shadow_ratio = (row.open - row.low) / (row.close - row.open)
 
-    #if shadow_ratio > 2:
-    #shade_list.append(tuple((shade_ratio, stock_row.name, row.date, stock_code)))
+    # if shadow_ratio > 2:
+    # shade_list.append(tuple((shade_ratio, stock_row.name, row.date, stock_code)))
     print(' ratio:', shadow_ratio, ' date:', row.date, ' open:', row.open, ' close:',
           row.close, ' low:', row.low, ' ma5', row.ma5, ' ma10', row.ma10, ' ma20:',
           row.ma20)
     return shadow_ratio
-          
+
+
 def day_break_moving_avg(row):
     if row.ma5 > row.ma10 or row.p_change < 2:
         return
@@ -144,11 +159,11 @@ def day_price_calculate(df, hist_dir, latest_n_days, name):
         stock_num = stock_num + 1
 
         csv_file = stock_code + '.csv'
-        if not os.path.exists(hist_dir + csv_file):
+        if not os.path.exists(os.path.join(hist_dir, csv_file)):
             print('file', csv_file, 'does not exist, skip it')
             continue
 
-        stock_df = pd.read_csv(hist_dir + csv_file, nrows=latest_n_days + 1)
+        stock_df = pd.read_csv(os.path.join(hist_dir, csv_file), nrows=latest_n_days + 1)
 
         if stock_df is None:
             print('failed to get history file ', stock_code)
@@ -166,7 +181,6 @@ def day_price_calculate(df, hist_dir, latest_n_days, name):
                 ratio = day_lower_shadow_line(row)
                 if ratio >= 2:
                     result_list.append(tuple((stock_row.name, row.date, stock_code)))
-                    
 
     result_df = pd.DataFrame(result_list, columns=['name', 'date', 'code'])
     result_df.code = result_df.code.astype('str')
@@ -198,11 +212,11 @@ def day_k_cross(df, hist_dir, latest_n_days):
         stock_num = stock_num + 1
 
         csv_file = stock_code + '.csv'
-        if not os.path.exists(hist_dir + csv_file):
+        if not os.path.exists(os.path.join(hist_dir, csv_file)):
             print('file', csv_file, 'does not exist, skip it')
             continue
 
-        stock_df = pd.read_csv(hist_dir + csv_file, nrows=latest_n_days + 1)
+        stock_df = pd.read_csv(os.path.join(hist_dir, csv_file), nrows=latest_n_days + 1)
 
         if stock_df is None:
             print('failed to get history file ', stock_code)

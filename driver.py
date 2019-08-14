@@ -11,9 +11,9 @@ import pdb
 result_string = ''
 # pdb.set_trace()
 
-stock_list_file = project_path + '/mystocklist-detail.csv'
-history_dir = '/home/johnny/python/csv/'
-#update_history.load_history(history_dir, stock_list_file)
+stock_list_file = 'mystocklist-detail.csv'
+history_dir = Path().joinpath('..', '..', 'stockdata')
+update_history.load_history(history_dir, stock_list_file)
 
 df = pd.read_csv(Path().joinpath(stock_list_file), converters={'code': lambda x: str(x)})
 

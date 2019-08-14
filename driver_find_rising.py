@@ -50,6 +50,7 @@ for row in df.itertuples():
                 print('empty tick for date ', tick_file_name)
                 break
             else:
+                pdb.set_trace()
                 df_resample = mylib.resample(df_tick, resample_intv, date_val)
                 #pdb.set_trace()
                 if df_resample is not None:

@@ -38,7 +38,7 @@ def load_history(hist_dir, stock_list_file):
 
     if not os.path.exists(hist_dir):
         os.mkdir(hist_dir)
-    os.chdir(hist_dir)
+    #os.chdir(hist_dir)
 
     total_num = len(index)
     cur_num = 1
@@ -46,9 +46,9 @@ def load_history(hist_dir, stock_list_file):
 
     for stock_code in index:
         # df_stock_hist = pd.read_csv(stock_code + '.csv', parse_dates=['date'])
-
-        if os.path.isfile(stock_code + '.csv'):
-            df_stock_hist = pd.read_csv(stock_code + '.csv')
+        hist_file = os.path.join(hist_dir, stock_code + '.csv')
+        if os.path.isfile(hist_file):
+            df_stock_hist = pd.read_csv(hist_file)
         else:
             df_stock_hist = pd.DataFrame()
 
@@ -73,7 +73,7 @@ def load_history(hist_dir, stock_list_file):
 
         df_stock_joined = pd.concat([df_from_network, df_stock_hist])
 
-        df_stock_joined.to_csv(stock_code + '.csv')
+        df_stock_joined.to_csv(hist_file)
 
 
 if __name__ == "__main__":
