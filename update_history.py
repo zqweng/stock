@@ -1,5 +1,7 @@
 """
-Update the stock history files specified by stock_list_file. stock history files are not stored in git.
+Update the stock history files specified by stock_list_file with the latest trading record. It checks the local trading
+record first and append latest record retrieved from network to the existing file.
+stock history files are not stored in git.
 1 load the stock list
 2 iterating through stock list, load each stock trade file.
 3 the date element in dataframe is a string type. we need to do an adding one day operation and retrieve
@@ -20,8 +22,9 @@ from pathlib import Path
 import tushare as ts
 import os
 
-#hist_dir = '/home/johnny/python/csv/'
-#stock_list_file = 'mystocklist-detail.csv'
+
+# hist_dir = '/home/johnny/python/csv/'
+# stock_list_file = 'mystocklist-detail.csv'
 
 def load_history(hist_dir, stock_list_file):
     default_start_date = '2017-01-01'
@@ -71,6 +74,7 @@ def load_history(hist_dir, stock_list_file):
         df_stock_joined = pd.concat([df_from_network, df_stock_hist])
 
         df_stock_joined.to_csv(stock_code + '.csv')
+
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata')

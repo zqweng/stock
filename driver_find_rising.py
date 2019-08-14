@@ -60,6 +60,7 @@ for row in df.itertuples():
 
         if not df_general.empty:
             df_general.sort_index(ascending=1, inplace=True)
+            pdb.set_trace()
             mydraw.draw_k_lines(df_general)
 
 
