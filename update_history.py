@@ -26,8 +26,8 @@ import os
 # hist_dir = '/home/johnny/python/csv/'
 # stock_list_file = 'mystocklist-detail.csv'
 
-def load_history(hist_dir, stock_list_file):
-    default_start_date = '2017-01-01'
+def load_history(hist_dir, stock_list_file, ktype_val='D'):
+    default_start_date = ''
     if not os.path.isfile(stock_list_file):
         print('股票清单 not exist, create one')
         quit()
@@ -35,7 +35,10 @@ def load_history(hist_dir, stock_list_file):
         print('股票清单 exists, load it')
         df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
         index = df['code']
-
+    if ktype_val == 'D' or ktype_val == 'd':
+        hist_dir = os.path.join(hist_dir, 'day')
+    elif ktype_val == 'W' or ktype_val == 'w':
+        hist_dir = os.path.join(hist_dir, 'week')
     if not os.path.exists(hist_dir):
         os.mkdir(hist_dir)
     #os.chdir(hist_dir)
@@ -60,7 +63,7 @@ def load_history(hist_dir, stock_list_file):
         print('index is ', stock_code, 'cur is ', cur_num, 'total ', total_num)
         cur_num = cur_num + 1
 
-        df_from_network = ts.get_hist_data(stock_code, start=date_string)
+        df_from_network = ts.get_hist_data(stock_code, start=date_string, ktype=ktype_val)
         if df_from_network is None:
             print('fail get history file', stock_code)
             continue
@@ -78,4 +81,5 @@ def load_history(hist_dir, stock_list_file):
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata')
-    load_history(tick_dir, 'mystocklist-detail.csv')
+    load_history(tick_dir, 'basic-no3.csv')
+    #load_history(tick_dir, 'basic-no3.csv', 'W')
