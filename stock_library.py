@@ -242,3 +242,53 @@ def day_k_cross(df, hist_dir, latest_n_days):
     print(start_time)
     print(datetime.datetime.now().time())
     return result_df
+
+def isSmallUp(p_change):
+    return 1 <= p_change < 4
+
+
+def day_n_days_small_up(df, hist_dir, num_of_up, latest_n_days):
+    """
+    find the stock that continually rise during n days between [1% - 4%)
+    """
+    start_time = datetime.datetime.now().time()
+    stock_num = 0
+    result_list = []
+
+    for stock_row in df.itertuples():
+        stock_code = stock_row.code
+        print('index is ', stock_code, 'num of stock is ', stock_num)
+        stock_num = stock_num + 1
+
+        csv_file = stock_code + '.csv'
+        if not os.path.exists(os.path.join(hist_dir, csv_file)):
+            print('file', csv_file, 'does not exist, skip it')
+            continue
+
+        stock_df = pd.read_csv(os.path.join(hist_dir, csv_file), nrows=latest_n_days + 3)
+
+        if stock_df is None:
+            print('failed to get history file ', stock_code)
+            continue
+
+        row_num = 0
+
+        # read each tick data for each date in that history table
+
+        # for row in stock_df.itertuples():
+        for i in range(0, latest_n_days):
+            # print('code ', stock_code, 'date ', row.date)
+            if isSmallUp(stock_df.loc[i].p_change) and \
+                    isSmallUp(stock_df.loc[i+1].p_change) and \
+                    isSmallUp(stock_df.loc[i+2].p_change):
+                print('code ', stock_code, 'date ', stock_df.loc[i].date)
+                result_list.append(tuple((stock_row.name, stock_df.loc[i].date, stock_code)))
+                break
+
+    result_df = pd.DataFrame(result_list, columns=['name', 'date', 'code'])
+    result_df.code = result_df.code.astype('str')
+
+    print(start_time)
+    print(datetime.datetime.now().time())
+    return result_df
+
