@@ -294,3 +294,4 @@ def day_n_days_small_up(df, hist_dir, num_of_up, latest_n_days):
     print(datetime.datetime.now().time())
     return result_df
 
+def day_find_up_period(df):
