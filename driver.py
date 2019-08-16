@@ -11,10 +11,10 @@ import pdb
 result_string = ''
 # pdb.set_trace()
 
-#stock_list_file = 'mystocklist-detail.csv'
-stock_list_file = 'basic-no3.csv'
+stock_list_file = 'mystocklist-detail.csv'
+#stock_list_file = 'basic-no3.csv'
 history_dir = Path().joinpath('..', '..', 'stockdata','day')
-#update_history.load_history(history_dir, stock_list_file)
+update_history.load_history(history_dir, stock_list_file)
 
 df = pd.read_csv(Path().joinpath(stock_list_file), converters={'code': lambda x: str(x)})
 
