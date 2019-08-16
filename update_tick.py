@@ -17,7 +17,7 @@ def load_tick(stock_list_file, start_date, end_date):
         print('股票清单 exists, load it')
         df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
 
-    tick_dir = Path().joinpath('..', '..', 'stockdata')
+    tick_dir = Path().joinpath('..', '..', 'stockdata','tick')
     timeRange = pd.date_range(start=start_date, end=end_date).strftime('%Y-%m-%d')
 
     for row in df.itertuples():
@@ -35,4 +35,5 @@ def load_tick(stock_list_file, start_date, end_date):
 
 
 if __name__ == "__main__":
-    load_tick('mystocklist-detail.csv', '2019-01-1', '2019-08-15')
+    #load_tick('mystocklist-detail.csv', '2019-08-1', '2019-08-16')
+    load_tick('basic-no3.csv','2019-08-1', '2019-08-16')

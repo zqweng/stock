@@ -243,9 +243,11 @@ def day_k_cross(df, hist_dir, latest_n_days):
     print(datetime.datetime.now().time())
     return result_df
 
-def isSmallUp(p_change):
-    return 1 <= p_change < 4
+def is_higher_shadow_line(row):
+    return (row.high - row.close) > (row.close - row.open)
 
+def is_small_up(row):
+    return 1 <= row.p_change < 4 and not is_higher_shadow_line(row)
 
 def day_n_days_small_up(df, hist_dir, num_of_up, latest_n_days):
     """
@@ -278,9 +280,9 @@ def day_n_days_small_up(df, hist_dir, num_of_up, latest_n_days):
         # for row in stock_df.itertuples():
         for i in range(0, latest_n_days):
             # print('code ', stock_code, 'date ', row.date)
-            if isSmallUp(stock_df.loc[i].p_change) and \
-                    isSmallUp(stock_df.loc[i+1].p_change) and \
-                    isSmallUp(stock_df.loc[i+2].p_change):
+            if is_small_up(stock_df.loc[i]) and \
+                    is_small_up(stock_df.loc[i+1]) and \
+                    is_small_up(stock_df.loc[i+2]):
                 print('code ', stock_code, 'date ', stock_df.loc[i].date)
                 result_list.append(tuple((stock_row.name, stock_df.loc[i].date, stock_code)))
                 break
