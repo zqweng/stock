@@ -90,7 +90,7 @@ def resample(tick_df, resample_intv, date_val):
         tick_df_afternoon = tick_df[(tick_df.index - startTime).seconds >= 10000]
         tick_df_afternoon = resample_local(tick_df_afternoon, resample_intv, date_val)
         return pd.concat([tick_df_morning, tick_df_afternoon])
-
+df
     else:
         return resample_local(tick_df, resample_intv, date_val)
 
