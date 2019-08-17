@@ -294,4 +294,121 @@ def day_n_days_small_up(df, hist_dir, num_of_up, latest_n_days):
     print(datetime.datetime.now().time())
     return result_df
 
-def day_find_up_period(df):
+def day_find_up_period(df, stock_code, result_list):
+    """
+    find the up period by checking ma5. up period must meet the following conditions:
+    1: the close price of the second bottom of rise period must be higher than the bottom one. otherwise, start all
+       over again.
+    2: ma5 price must always rise up. else
+    3: if ma5 drop for the first time, the price of that day must be 15% higher than the bottom price.otherwise,
+       start all over again.
+    4:if ma5 drop continue 4 days in a row, period end.
+    :param df:
+    :return:
+    """
+    rise_bottom = -1
+    rise_ceil = -1
+    ma5_down = 0
+    #pdb.set_trace()
+    for i in df.index:
+        if i == 0:
+            """
+            first item must be the bottom
+            """
+            rise_bottom = 0
+        else:
+            if rise_bottom == -1:
+                print('new bottom ma5', i, df.loc[i].date)
+                if df.loc[i].ma5 > df.loc[i-1].ma5:
+                    rise_bottom = i - 1
+                    rise_ceil = i
+                    ma5_down = 0
+            else:
+                print ('i=', i, ' ma5=', df.loc[i].ma5)
+                if df.loc[i].ma5 >= df.loc[i-1].ma5:
+                    rise_ceil = i
+                    ma5_down = 0
+                    print('continue bottom ma5', df.loc[rise_bottom].ma5 )
+                else:
+                    """
+                    first time ma5 drop could only happen after ma5 rise no less than 13%,
+                    otherwise it is not an up period
+                    """
+                    if ma5_down == 0:
+                        ma5_down = 1
+                        if (df.loc[i].ma5 - df.loc[rise_bottom].ma5)/df.loc[rise_bottom].ma5 < 0.1:
+                            print('reset bottom ma5', df.loc[rise_bottom].ma5, 'current ma5 ', df.loc[i].ma5)
+                            rise_bottom = -1
+                            rise_ceil = -1
+                        else:
+                            print('first time ma5 down, but since it rise up to 10%, lets continue')
+                    else:
+                        ma5_down = ma5_down + 1
+                        print ('ma5_down is ', ma5_down)
+                        """
+                        if ma5 drop 4 days in a row, rise terminate.
+                        """
+                        if ma5_down >= 4:
+                            print('find one: start index ', rise_bottom, ' end index ', rise_ceil)
+                            ma5_down = 0
+                            result_list.append(tuple((stock_code, df.loc[rise_bottom].date, df.loc[rise_ceil].date,
+                                                      rise_ceil - rise_bottom + 1,
+                                                      (df.loc[rise_ceil].ma5 - df.loc[rise_bottom].ma5)*100
+                                                      /df.loc[rise_bottom].ma5)))
+                            rise_bottom = -1
+                            rise_ceil = -1
+
+    if rise_ceil != -1 and rise_bottom != -1:
+        if (df.loc[i].ma5 - df.loc[rise_bottom].ma5) / df.loc[
+            rise_bottom].ma5 >= 0.1:
+            result_list.append(tuple((stock_code, df.loc[rise_bottom].date,
+                                      df.loc[rise_ceil].date, rise_ceil - rise_bottom + 1,
+                                      (df.loc[rise_ceil].ma5 - df.loc[rise_bottom].ma5) * 100
+                                      /df.loc[rise_bottom].ma5)))
+
+
+def day_find_up_period_list(df, hist_dir, latest_n_days):
+    """
+    current criteria is
+    find up period list
+
+    :param df: dataframe includes the stock list to be analyzed
+    :param hist_dir: stock history files for the stock list
+    :param latest_n_days:
+    :return: a new dataframe that meet the criteria.
+    """
+    start_time = datetime.datetime.now().time()
+    stock_num = 0
+    result_list = []
+
+    for stock_row in df.itertuples():
+        stock_code = stock_row.code
+        print('index is ', stock_code, 'num of stock is ', stock_num)
+        stock_num = stock_num + 1
+
+        csv_file = stock_code + '.csv'
+        if not os.path.exists(os.path.join(hist_dir, csv_file)):
+            print('file', csv_file, 'does not exist, skip it')
+            continue
+
+        stock_df = pd.read_csv(os.path.join(hist_dir, csv_file), nrows=latest_n_days + 1)
+
+        if stock_df is None:
+            print('failed to get history file ', stock_code)
+            continue
+
+        row_num = 0
+
+        # read each tick data for each date in that history table
+        stock_df.set_index('date', inplace=True)
+        stock_df.sort_index(ascending=1, inplace=True)
+        stock_df.reset_index(inplace=True)
+        day_find_up_period(stock_df,stock_code, result_list)
+
+    result_df = pd.DataFrame(result_list, columns=['code', 'start_date', 'end_date', 'days', 'p_change'])
+    result_df.code = result_df.code.astype('str')
+
+    print(start_time)
+    print(datetime.datetime.now().time())
+    return result_df
+

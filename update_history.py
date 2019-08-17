@@ -81,5 +81,5 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata')
-    load_history(tick_dir, 'basic-no3.csv')
-    #load_history(tick_dir, 'basic-no3.csv', 'W')
+    #load_history(tick_dir, 'basic-no3.csv')
+    load_history(tick_dir, 'basic-no3.csv', 'W')
