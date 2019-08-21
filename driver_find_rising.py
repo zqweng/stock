@@ -24,15 +24,15 @@ resample_intv = '60min'
 
 df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
 #stock_name = '三全食品'
-#stock_name = '博通集成'
-stock_name = '金健米业'
+stock_name = '博通集成'
+#stock_name = '金健米业'
 for row in df.itertuples():
     if row.name == stock_name:
         """
         stock history file and stock tick file for each are under the same directory of ../../stockdata/stock_code/
         """
         stock_trade_file = row.code + '.csv'
-        file_path = Path().joinpath('..', '..', 'stockdata')
+        file_path = Path().joinpath('..', '..', 'stockdata','day')
         file_with_full_path = os.path.join(file_path,stock_trade_file)
         #pdb.set_trace()
         df_stock = pd.read_csv(file_with_full_path, parse_dates=['date'])

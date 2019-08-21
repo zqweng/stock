@@ -21,7 +21,7 @@ df = pd.read_csv(Path().joinpath(stock_list_file), converters={'code': lambda x:
 if df.empty:
     print('no stock list, quit')
 
-result_df3 = mylib.day_n_days_small_up(df, history_dir, 3, 3)
+result_df3 = mylib.day_n_days_small_up(df, history_dir, 4, 3)
 if not result_df3.empty:
     result_string = result_string + '\n\nprice has 3 days up between 1% and 4% \n' + result_df3.to_string()
 else:

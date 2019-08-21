@@ -31,6 +31,9 @@ def create_resample_k(stock_list_file, start_date, end_date, resample_intv):
                     df_tick = mylib.resample(df_tick, resample_intv, date_val)
                 df_resample_k = pd.concat([df_resample_k,df_tick])
 
+        df_resample_k['ma5'] = df_resample_k.close.rolling(window=5, min_periods=1).mean()
+        df_resample_k = df_resample_k.round(2)
+        df_resample_k.index.names = ['date']
         result_file_name = os.path.join(result_dir, row.code + '.csv')
         print ('write result file', result_file_name)
         df_resample_k.to_csv(result_file_name)

@@ -400,7 +400,11 @@ def day_find_up_period_list(df, hist_dir, latest_n_days):
         row_num = 0
 
         # read each tick data for each date in that history table
-        stock_df.set_index('date', inplace=True)
+        if 'data' in stock_df.columns:
+            stock_df.set_index('date', inplace=True)
+        elif 'time' in stock_df.columns:
+            stock_df.set_index('time', inplace=True)
+
         stock_df.sort_index(ascending=1, inplace=True)
         stock_df.reset_index(inplace=True)
         day_find_up_period(stock_df,stock_code, result_list)
