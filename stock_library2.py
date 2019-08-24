@@ -46,17 +46,51 @@ def find_ma5_up(df, name,  code, latest_n_days, result_list, para1, para2):
                                   latest_n_days, 0)))
     return True
 
-def find_ma10_up(df, name,  code, latest_n_days, result_list, para1, para2):
-    for i in range(latest_n_days):
-        if df.loc[i].ma10 == 0:
-            return False
+"check if price of type para1 go up from last day for latest_n_periods"
+def is_price_go_up(df, latest_n_periods, para1, para2):
+    for i in range(latest_n_periods):
+        if para1 == 'close':
+            if df.loc[i].p_change <= 0:
+                return False
+        if para1 == 'ma5':
+            if df.loc[i].ma5 <= df.loc[i+1].ma5:
+                return False
+        elif para1 == 'ma10':
+            if df.loc[i].ma10 <= df.loc[i + 1].ma10:
+                return False
+        elif para1 == 'ma20':
+            if df.loc[i].ma20 <= df.loc[i + 1].ma20:
+                return False
 
-        if df.loc[i].ma10 <= df.loc[i+1].ma10:
-            return False
+    return True
 
-    result_list.append(tuple((name, code, df.loc[0].date,
-                              df.loc[latest_n_days - 1].date,
-                              latest_n_days, 0)))
+def get_price(df, i, para):
+    if para == 'close':
+        return df.loc[i].close
+    elif para == 'ma5':
+        return df.loc[i].ma5
+    elif para == 'ma10':
+        return df.loc[i].ma10
+    elif para == 'ma20':
+        return df.loc[i].ma20
+    else
+        return None
+
+"check if para1 type of price is always above para2 type of price for the same day for latest_n_periods"
+
+def is_price_above(df, latest_n_periods, para1, para2):
+    for i in range(latest_n_periods):
+        price1 = get_price(df, i, para1)
+        if price1 is None:
+            print('wrong para1')
+            return
+        price2 = get_price(df, i, para2)
+        if price2 is None:
+            print('wrong para2')
+            return
+        if price1 <= price2:
+            return
+
     return True
 
 def find_cross_ma20(df, name,  code, latest_n_days, result_list, para1, para2):

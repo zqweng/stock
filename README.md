@@ -14,5 +14,15 @@ find_cross_ma20:        check if price drop bellow and then go up across ma20
 
 
 
+买入点1：
+1） day:
+    ma5 > ma10: 5 days in a row
+    ma5 rise 5days in a row
+    ma10 rise 5 days in a row
+
+2) week:
+   ma10 rise two weeks in a row
+   lowest price is above ma5 and ma10
+
 
 
