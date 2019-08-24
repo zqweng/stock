@@ -15,7 +15,7 @@ def find_price_up_for_n_period(df, name,  code, latest_n_days, result_list, para
                 return
             else:
                 price_up_num = 0
-        else
+        else:
             price_up_num = price_up_num + 1
 
     if price_up_num >= para1:
@@ -73,7 +73,7 @@ def get_price(df, i, para):
         return df.loc[i].ma10
     elif para == 'ma20':
         return df.loc[i].ma20
-    else
+    else:
         return None
 
 "check if para1 type of price is always above para2 type of price for the same day for latest_n_periods"
@@ -83,13 +83,13 @@ def is_price_above(df, latest_n_periods, para1, para2):
         price1 = get_price(df, i, para1)
         if price1 is None:
             print('wrong para1')
-            return
+            return None
         price2 = get_price(df, i, para2)
         if price2 is None:
             print('wrong para2')
-            return
+            return None
         if price1 <= price2:
-            return
+            return False
 
     return True
 
@@ -209,7 +209,7 @@ if __name__ == '__main__':
         result_string = result_string + "\n\nin last n days  ma5 up \n" + result_df.to_string()
     else:
         result_string = result_string + '\n\nno stock in last n days  has ma5 up \n'
-    print(result_string)
+    #print(result_string)
 
     tick_dir = Path().joinpath('..', '..', 'stockdata', 'week')
     result_df = hist_callback(result_df, tick_dir, 5, find_ma10_up,
@@ -221,4 +221,4 @@ if __name__ == '__main__':
         result_string2 = result_string + "\n\nin last n days  ma5 up \n" + result_df.to_string()
     else:
         result_string2 = result_string + '\n\nno stock in last n days  has ma5 up \n'
-    print(result_string2)
+    #print(result_string2)
