@@ -52,4 +52,3 @@ if __name__ == '__main__':
     #test_find_up_period('day', 120)
     test_find_up_period('60min', 120)
 
-

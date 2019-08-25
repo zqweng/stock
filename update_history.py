@@ -20,6 +20,7 @@ stock history files are not stored in git.
 import pandas as pd
 from pathlib import Path
 import tushare as ts
+import stock_library3 as mylib3
 import os
 
 
@@ -76,12 +77,55 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
 
         df_stock_joined = pd.concat([df_from_network, df_stock_hist])
 
+        df_stock_joined = mylib3.macd(df_stock_joined)
+
         df_stock_joined.to_csv(hist_file)
+
+
+
+def add_history_with_MACD(hist_dir, stock_list_file, ktype_val='D'):
+    if not os.path.isfile(stock_list_file):
+        print('股票清单 not exist, create one')
+        quit()
+    else:
+        print('股票清单 exists, load it')
+        df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
+        index = df['code']
+
+    if ktype_val == 'D' or ktype_val == 'd':
+        new_hist_dir = os.path.join(hist_dir, 'macdday')
+        hist_dir = os.path.join(hist_dir, 'day')
+    elif ktype_val == 'W' or ktype_val == 'w':
+        new_hist_dir = os.path.join(hist_dir, 'macdweek')
+        hist_dir = os.path.join(hist_dir, 'week')
+
+    if not os.path.exists(new_hist_dir):
+        os.mkdir(new_hist_dir)
+
+    total_num = len(index)
+    cur_num = 1
+    date_string = ''
+
+    for stock_code in index:
+        hist_file = os.path.join(hist_dir, stock_code + '.csv')
+        new_hist_file = os.path.join(new_hist_dir, stock_code + '.csv')
+
+        if os.path.isfile(hist_file):
+            df_stock_hist = pd.read_csv(hist_file)
+        else:
+            continue
+
+        print('index is ', stock_code, 'cur is ', cur_num, 'total ', total_num)
+        cur_num = cur_num + 1
+
+        df_stock_hist.set_index('date', inplace=True)
+        df_stock_joined = mylib3.macd(df_stock_hist)
+        df_stock_joined.to_csv(new_hist_file)
 
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata')
     #'mystocklist-detail.csv'
-    load_history(tick_dir, 'basic-no3.csv')
-    #load_history(tick_dir, 'basic-no3.csv')
+    #load_history(tick_dir, 'mystocklist-detail.csv')
+    add_history_with_MACD(tick_dir, 'basic-no3.csv')
     #load_history(tick_dir, 'basic-no3.csv', 'W')

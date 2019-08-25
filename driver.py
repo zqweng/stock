@@ -20,13 +20,14 @@ df = pd.read_csv(Path().joinpath(stock_list_file), converters={'code': lambda x:
 
 if df.empty:
     print('no stock list, quit')
-"""
+
 result_df = mylib.day_k_cross(df, history_dir, 2)
-# pdb.set_trace()
+pdb.set_trace()
 if not result_df.empty:
     result_string = result_string + '\nma5 cross ma10 \n' + result_df.to_string()
 else:
     result_string = result_string + '\nno ma5 cross ma10 \n'
+print(result_string)
 """
 result_df1 = mylib.day_price_calculate(df, history_dir, 5, 'break ma')
 if not result_df1.empty:
@@ -45,3 +46,4 @@ df_common = result_df[result_df['code'].isin(result_df1['code'])]
 df_common = result_df2[result_df2['code'].isin(df_common['code'])]
 if not df_common.empty:
     print('\n\n common stock \n' + df_common.to_string())
+"""
