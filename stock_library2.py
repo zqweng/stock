@@ -4,6 +4,28 @@ import pandas as pd
 from pathlib import Path
 import pdb
 
+
+def find_price_up_for_n_period(df, name, code, latest_n_days, result_list, para1, para2):
+    price_up_num = 0
+    for i in range(latest_n_days):
+        if df.loc[i].p_change <= 0:
+            if price_up_num >= para1:
+                result_list.append(tuple((name, code, df.loc[i - 1].date,
+                                          df.loc[i - price_up_num - 1].date,
+                                          price_up_num, 0)))
+                return
+            else:
+                price_up_num = 0
+        else:
+            price_up_num = price_up_num + 1
+
+    if price_up_num >= para1:
+        result_list.append(tuple((name, code, df.loc[i - 1].date,
+                                  df.loc[i - price_up_num - 1].date,
+                                  price_up_num, 0)))
+
+    return True
+
 def find_price_up_for_n_period(df, name,  code, latest_n_days, result_list, para1, para2):
     price_up_num = 0
     for i in range(latest_n_days):
@@ -47,7 +69,7 @@ def find_ma5_up(df, name,  code, latest_n_days, result_list, para1, para2):
     return True
 
 "check if price of type para1 go up from last day for latest_n_periods"
-def is_price_go_up(df, latest_n_periods, para1, para2):
+def is_price_go_up_for_n_period(df, latest_n_periods, para1, para2):
     for i in range(latest_n_periods):
         if para1 == 'close':
             if df.loc[i].p_change <= 0:
@@ -121,6 +143,36 @@ def find_cross_ma20(df, name,  code, latest_n_days, result_list, para1, para2):
                                   df.loc[start_index].date,
                                   latest_n_days, 0)))
     return True
+
+def find_price_go_up_for_n_period(df, name,  code, latest_n_days, result_list, para1, para2):
+    cur_price = 0
+    last_price = 0
+
+    for i in range(latest_n_days):
+        if para1 == 'ma5':
+            cur_price = df.loc[i].ma5
+            last_price = df.loc[i+1].ma5
+        elif para1 == 'ma10':
+            cur_price = df.loc[i].ma10
+            last_price = df.loc[i+1].ma10
+        elif para2 == 'ma20':
+            cur_price = df.loc[i].ma20
+            last_price = df.loc[i+1].ma20
+
+        if cur_price <= last_price:
+            return
+
+    result_list.append(tuple((name, code, df.loc[0].date, df.loc[latest_n_days - 1].date,
+                               latest_n_days, 0)))
+    return True
+
+
+def sum_of_latest_n_days_price_up(df, name,  code, latest_n_days, result_list, para1, para2):
+    result_list.append(tuple((name, code, df.loc[0].date,
+                              df.loc[latest_n_days-1].date,
+                              latest_n_days, df[0:latest_n_days]['p_change'].sum())))
+    return
+
 
 
 def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_period=0):

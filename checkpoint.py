@@ -13,13 +13,13 @@ def check_point_one_for_day(df, name,  code, latest_n_periods, result_list, para
     if ret is None or not ret:
         return False
 
-    if not mylib2.is_price_go_up(df, latest_n_periods, 'ma5', 'None'):
+    if not mylib2.is_price_go_up_for_n_period(df, latest_n_periods, 'ma5', 'None'):
         return False
 
-    if not mylib2.is_price_go_up(df, latest_n_periods, 'ma10', 'None'):
+    if not mylib2.is_price_go_up_for_n_period(df, latest_n_periods, 'ma10', 'None'):
         return False
 
-    if not mylib2.is_price_go_up(df, latest_n_periods, 'ma20', 'None'):
+    if not mylib2.is_price_go_up_for_n_period(df, latest_n_periods, 'ma20', 'None'):
         return False
 
     result_list.append(tuple((name, code, '', '',
@@ -29,10 +29,10 @@ def check_point_one_for_day(df, name,  code, latest_n_periods, result_list, para
 
 def check_point_one_for_week(df, name,  code, latest_n_periods, result_list, para1, para2):
 
-    if not mylib2.is_price_go_up(df, latest_n_periods, 'ma10', 'None'):
+    if not mylib2.is_price_go_up_for_n_period(df, latest_n_periods, 'ma10', 'None'):
         return False
 
-    if not mylib2.is_price_go_up(df, latest_n_periods, 'close', 'None'):
+    if not mylib2.is_price_go_up_for_n_period(df, latest_n_periods, 'close', 'None'):
         return False
     result_list.append(tuple((name, code, '', '',
                               latest_n_periods, 0)))

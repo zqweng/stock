@@ -25,4 +25,20 @@ find_cross_ma20:        check if price drop bellow and then go up across ma20
    lowest price is above ma5 and ma10
 
 
+how to unifiy the record format for day and week and month:
+
+in current tushare, the fields in day file is:
+
+date,open,high,close,low,volume,price_change,p_change,ma5,ma10,ma20,v_ma5,v_ma10,v_ma20
+
+in baostock, it supports
+
+date,code,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST
+
+so the common fields are:
+date,open,high,close,low,volume,price_change,p_change, (ma5, ma10, ma20)
+ma5, ma10 and ma20 should be calculated by hand when loading data from baostock.
+
+
+
 

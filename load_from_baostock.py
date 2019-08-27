@@ -1,21 +1,3 @@
-"""
-Update the stock history files specified by stock_list_file with the latest trading record. It checks the local trading
-record first and append latest record retrieved from network to the existing file.
-stock history files are not stored in git.
-1 load the stock list
-2 iterating through stock list, load each stock trade file.
-3 the date element in dataframe is a string type. we need to do an adding one day operation and retrieve
-   the record since that latest day
-4 the dataframe created by reading file has been added a new index column by pandas, this index is the row number
-   so we can use this index to access each row by df.loc[index]. when  writing back to csv file, this index will be kept
-   in the file. So if we dont want this index in fhe file, we should set index to date before we write
-5  the dataframe read from the network has date as index, so when it write to csv file, no extra index is added.
-
-6  we need to use pandas.concat to combine the two dataframe, before joining them together, we should remove the index
-   columen in the dataframe from file.
-
-7  when we write back of new dataframe to the opened file, the old content will be overwritten.
-"""
 
 import pandas as pd
 from pathlib import Path
