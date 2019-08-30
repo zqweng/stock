@@ -1,7 +1,7 @@
 
 import pandas as pd
 from pathlib import Path
-import tushare as ts
+import baostock as bs
 import stock_library3 as mylib3
 import os
 
@@ -9,7 +9,47 @@ import os
 # hist_dir = '/home/johnny/python/csv/'
 # stock_list_file = 'mystocklist-detail.csv'
 
+def find_sub_hist_dir(hist_dir, type):
+    if ktype_val == 'D' or ktype_val == 'd':
+        hist_dir = os.path.join(hist_dir, 'day')
+    elif ktype_val == 'W' or ktype_val == 'w':
+        hist_dir = os.path.join(hist_dir, 'week')
+    if not os.path.exists(hist_dir):
+        os.mkdir(hist_dir)
+
+    return hist_dir
+
+def create_df_from_bao_rs(rs):
+    data_list = []
+    while (rs.error_code == '0') & rs.next():
+        # 获取一条记录，将记录合并在一起
+        data_list.append(rs.get_row_data())
+
+    df_result = pd.DataFrame(data_list, columns=rs.fields)
+    df_result = df_result[['date', 'code', 'open', 'high', 'low', 'close', 'volume', 'amount', 'turn', 'pctChg']]
+    df_result.columns = ['date', 'code', 'open', 'high', 'low', 'close', 'volume', 'amount', 'turn', 'p_change']
+    return df_result
+
+"""
+change 6xxxxx to sh.6xxxxx, 0xxxxx to sz.0xxxxxxx
+"""
+def add_stock_code_prefix(code):
+    if code[0] == '6'
+        return 'sh.' + code
+    else
+        return 'sz.' + code
+
+
+"""
+if subdirectory 'week' or 'day' do not exist, it will create one.
+
+"""
 def load_history(hist_dir, stock_list_file, ktype_val='D'):
+    lg = ts.login()
+
+    print('login respond error_code:' + lg.error_code)
+    print('login respond  error_msg:' + lg.error_msg)
+
     default_start_date = ''
     if not os.path.isfile(stock_list_file):
         print('股票清单 not exist, create one')
@@ -18,13 +58,9 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
         print('股票清单 exists, load it')
         df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})
         index = df['code']
-    if ktype_val == 'D' or ktype_val == 'd':
-        hist_dir = os.path.join(hist_dir, 'day')
-    elif ktype_val == 'W' or ktype_val == 'w':
-        hist_dir = os.path.join(hist_dir, 'week')
-    if not os.path.exists(hist_dir):
-        os.mkdir(hist_dir)
-    #os.chdir(hist_dir)
+
+    hist_dir = find_sub_hist_dir(hist_dir, ktype_val)
+
 
     total_num = len(index)
     cur_num = 1
@@ -46,13 +82,15 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
         print('index is ', stock_code, 'cur is ', cur_num, 'total ', total_num)
         cur_num = cur_num + 1
 
-        df_from_network = ts.get_h_data(stock_code, start=date_string, ktype=ktype_val)
-        if df_from_network is None:
-            print('fail get history file', stock_code)
-            continue
-        if df_from_network.empty:
+        rs = bs.query_history_k_data_plus(add_stock_code_prefix(code),
+                                          "date,code,open,high,low,close,preclose,volume,amount,adjustflag,turn,tradestatus,pctChg,isST",
+                                          start_date='2017-07-01',
+                                          frequency="d", adjustflag="2")
+        if len(rs.data) == 0:
             print('no new data for', stock_code)
             continue
+
+        df_from_network = create_df_from_bao_rs(rs)
 
         if not df_stock_hist.empty:
             df_stock_hist.set_index('date', inplace=True)

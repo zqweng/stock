@@ -2,6 +2,7 @@ import datetime
 import os
 import pandas as pd
 import stock_library2 as mylib2
+import stock_library4 as mylib4
 from pathlib import Path
 import pdb
 
@@ -27,4 +28,13 @@ def get_latest_n_periods_price_up(df, num_of_periods, type, period_type):
                               period_type,
                               0,
                               20)
+    return result_df
+
+def get_w_shape(df, num_of_periods, type='day'):
+    result_string = ''
+    tick_dir = Path().joinpath('..', '..', 'stockdata', type)
+    result_df = mylib2.hist_callback(df, tick_dir, num_of_periods, mylib4.find_w_shape,
+                                     0,
+                                     0,
+                                     num_of_periods)
     return result_df

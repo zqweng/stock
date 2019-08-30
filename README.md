@@ -39,6 +39,16 @@ so the common fields are:
 date,open,high,close,low,volume,price_change,p_change, (ma5, ma10, ma20)
 ma5, ma10 and ma20 should be calculated by hand when loading data from baostock.
 
+so when load data from baostock, first thing is to remove unwanted fields and rename pctChg to p_change
+keep the old stockdata loaded from tushare, recreated a new database from baostock
 
+create a function that find w shape in days record.
+1: set date as index
+1: find the lowest price in the given period. use pandas min() method
+2: to the right, find a peak and a valley.
+    to find a peak, in next five records, find the max and it is 15% up than the lowest, and it must be at least two records away.
+    then find the lowest and it is at least 10% lower than the max,
+    then to the right of the second minimum, all records are higher than this,
+    to the left of the first minimum, all records are higher than this.
 
 

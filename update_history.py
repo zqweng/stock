@@ -64,7 +64,7 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
         print('index is ', stock_code, 'cur is ', cur_num, 'total ', total_num)
         cur_num = cur_num + 1
 
-        df_from_network = ts.get_h_data(stock_code, start=date_string, ktype=ktype_val)
+        df_from_network = ts.get_hist_data(stock_code, start=date_string, ktype=ktype_val)
         if df_from_network is None:
             print('fail get history file', stock_code)
             continue
@@ -197,5 +197,5 @@ if __name__ == "__main__":
     #'mystocklist-detail.csv'
     #load_history(tick_dir, 'mystocklist-detail.csv')
     #add_history_with_MACD(tick_dir, 'basic-no3.csv')
-    load_history(tick_dir, 'basic-no3.csv', 'W')
+    load_history(tick_dir, 'basic-no3.csv')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', recalculate_ma10, )
