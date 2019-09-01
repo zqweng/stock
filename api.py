@@ -56,5 +56,5 @@ def get_w_shape(df, num_of_periods, type='day'):
     df_result.to_csv(tmpfile)
     return df_result
 
-
+def
 
