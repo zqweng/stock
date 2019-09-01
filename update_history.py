@@ -75,7 +75,9 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
         if not df_stock_hist.empty:
             df_stock_hist.set_index('date', inplace=True)
 
-        df_stock_joined = pd.concat([df_from_network, df_stock_hist])
+        df_stock_joined = pd.concat([df_from_network, df_stock_hist], sort=True)
+        df_stock_joined = df_stock_joined[['close', 'open', 'high', 'low', 'ma5', 'ma10', 'ma20',
+                                           'p_change', 'price_change', 'volume']]
 
         df_stock_joined = mylib3.macd(df_stock_joined)
 
@@ -191,11 +193,21 @@ def update_history_with_callback(hist_dir, stock_list_file, callback, ktype_val=
         callback(df_stock_hist)
         df_stock_hist.to_csv(new_hist_file)
 
+def update_basics():
+    df = pd.read_csv("basic-no3.csv", converters={'code': lambda x: str(x)})
+    df_new = ts.get_stock_basics()
+    df_updated = df_new.loc[df_new.index.isin(df['code'])]
+    if len(df_updated.index) != len(df.index):
+        print('basic list has been reduced, missed: ',  set(df.code).symmetric_difference(set(df_updated.index)))
+    df_updated.sort_values('code', inplace=True)
+    df_updated.to_csv("basic-no3.csv")
+
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata')
     #'mystocklist-detail.csv'
     #load_history(tick_dir, 'mystocklist-detail.csv')
     #add_history_with_MACD(tick_dir, 'basic-no3.csv')
-    load_history(tick_dir, 'basic-no3.csv')
+    #load_history(tick_dir, 'basic-no3.csv')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', recalculate_ma10, )
+    update_basics()
