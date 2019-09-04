@@ -202,6 +202,9 @@ def update_basics():
     df_updated.sort_values('code', inplace=True)
     df_updated.to_csv("basic-no3.csv")
 
+def update_day():
+    tick_dir = Path().joinpath('..', '..', 'stockdata')
+    load_history(tick_dir, 'basic-no3.csv')
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata')

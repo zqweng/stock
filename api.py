@@ -43,6 +43,14 @@ def fill_columns(df, df_result):
                 df_result.loc[i, 'pe'] = row.pe
     return df_result
 
+def rank_stock(df_result):
+    df_result = df_result.replace({'pe': 0}, 10000)
+    df_result = df_result[df_result['totals'] != 0]
+    df_result['rank'] = 5 / np.log10(df_result['pe']) + 2 / np.log10(3 * df_result['totals'])
+    df_result['rankPe'] = 5 / np.log10(df_result['pe'])
+    df_result['ranktotals'] = 2 / np.log10(3 * df_result['totals'])
+    df_result.sort_values('rank', inplace=True, ascending=False)
+    return df_result
 
 def get_w_shape(df, num_of_periods, type='day'):
     result_string = ''
@@ -54,13 +62,13 @@ def get_w_shape(df, num_of_periods, type='day'):
 
     df_result = fill_columns(df, df_result)
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    df_result = rank_stock(df_result)
     tmpfile = Path().joinpath('tmp', 'w-shape-' + str_time + '.csv')
-    df_result.sort_values('start_date', inplace=True, ascending=False)
     df_result.to_csv(tmpfile)
     return df_result
 
 
-def get_history_high(df, num_of_days, num_of_months=''):
+def get_history_high(df, num_of_days, num_of_months=0):
     result_string = ''
     tick_dir = Path().joinpath('..', '..', 'stockdata', 'day')
     df_result = mylib2.hist_callback(df, tick_dir, num_of_days, mylib4.find_history_high,
@@ -71,14 +79,7 @@ def get_history_high(df, num_of_days, num_of_months=''):
     df_result = fill_columns(df, df_result)
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     tmpfile = Path().joinpath('tmp', 'get_history_high-' + str_time + '_' + str(num_of_months) + '_mon_' + '.csv')
-    # df_result.sort_values('start_date', inplace=True, ascending=False)
-    # df_result.sort_values('pe', inplace=True, ascending=True)
-    df_result = df_result.replace({'pe': 0}, 10000)
-    df_result = df_result[df_result['totals'] != 0]
-    df_result['rank'] = 5/ np.log10(df_result['pe']) + 2 / np.log10(3 * df_result['totals'])
-    df_result['rankPe'] = 5/ np.log10(df_result['pe'])
-    df_result['ranktotals'] = 2 / np.log10(3 * df_result['totals'])
-    df_result.sort_values('rank', inplace=True, ascending=False)
+    df_result = rank_stock(df_result)
     df_result.to_csv(tmpfile)
     return df_result
 

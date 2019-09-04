@@ -93,6 +93,7 @@ def find_history_high(df, name,  code, latest_n_days, result_list, para1, para2)
     don't count the recent month
     """
     df_history = df_history[:-1]
+    pdb.set_trace()
     if para2 > 0:
         df_history = df_history.tail(para2)
 

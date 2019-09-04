@@ -63,3 +63,10 @@ find pe = 0 and change it to 10000:
 NO difference
 df.loc[df['high']>29 ]
 df[df['high']>29 ]
+
+bind two search together:
+
+1: update day records, at the end of month, update month
+2: calculate history high and one year high, generate file in result folder
+3: calculate w-shape, generate file in result folder
+4: calculate ma5 across ma10
