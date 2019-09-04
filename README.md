@@ -52,3 +52,14 @@ create a function that find w shape in days record.
     to the left of the first minimum, all records are higher than this.
 
 
+how to rank stock list:
+two measurements: PE and total shares
+weight of PE is 60
+weight of share is 40
+1/log10(pe) + 1/log10(share)
+
+find pe = 0 and change it to 10000:
+
+NO difference
+df.loc[df['high']>29 ]
+df[df['high']>29 ]

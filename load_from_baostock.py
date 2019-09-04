@@ -14,6 +14,8 @@ def find_sub_hist_dir(hist_dir, ktype_val):
         hist_dir = os.path.join(hist_dir, 'day')
     elif ktype_val == 'W' or ktype_val == 'w':
         hist_dir = os.path.join(hist_dir, 'week')
+    elif ktype_val == 'M' or ktype_val == 'm':
+        hist_dir = os.path.join(hist_dir, 'month')
     if not os.path.exists(hist_dir):
         os.mkdir(hist_dir)
 
@@ -98,4 +100,5 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
-    load_history(tick_dir, 'basic-no3.csv', 'w')
+    #load_history(tick_dir, 'basic-no3.csv', 'm')
+    load_history(tick_dir, 'basic-no3.csv', 'd')

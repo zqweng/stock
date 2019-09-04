@@ -1,3 +1,6 @@
+import pandas as pd
+import os
+from pathlib import Path
 import pdb
 def find_w_shape(df, name,  code, latest_n_days, result_list, para1, para2):
     """
@@ -64,4 +67,44 @@ def find_w_shape(df, name,  code, latest_n_days, result_list, para1, para2):
 
     result_list.append(tuple((name, code, first_peek_index, second_lowest_index.low, latest_n_days, lowest_index.low)))
     return
+
+
+def find_history_high(df, name,  code, latest_n_days, result_list, para1, para2):
+    """
+    the original index was int, we change it to date and sort it in ascending order
+    :param df:
+    :param name:
+    :param code:
+    :param latest_n_days:
+    :param result_list:
+    :param para1: within number of days, price break record
+    :param para2: record type, could be all time, one year, etc.
+    :return:
+    """
+
+    #print('find history record for ', code)
+
+    history_dir = Path().joinpath('..', '..', 'stockdata-bao', 'month')
+    df_history = pd.read_csv((os.path.join(history_dir, code + '.csv')))
+    if df_history is None:
+        print("month file for ", code, " does not exist")
+        return
+    """
+    don't count the recent month
+    """
+    df_history = df_history[:-1]
+    if para2 > 0:
+        df_history = df_history.tail(para2)
+
+    for row in df.head(latest_n_days).itertuples():
+        lower = False
+        for row_history in df_history.itertuples():
+            #print ('price ', row.high, ' and month high is ', row_history.high)
+            if row.high <= row_history.high:
+                lower = True
+                break
+        if not lower:
+            result_list.append(tuple((name, code, row.date, 0, 0, latest_n_days)))
+            return
+
 

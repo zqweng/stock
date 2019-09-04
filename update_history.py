@@ -208,6 +208,6 @@ if __name__ == "__main__":
     #'mystocklist-detail.csv'
     #load_history(tick_dir, 'mystocklist-detail.csv')
     #add_history_with_MACD(tick_dir, 'basic-no3.csv')
-    #load_history(tick_dir, 'basic-no3.csv')
+    load_history(tick_dir, 'basic-no3.csv')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', recalculate_ma10, )
-    update_basics()
+    #update_basics()
