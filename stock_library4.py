@@ -93,7 +93,6 @@ def find_history_high(df, name,  code, latest_n_days, result_list, para1, para2)
     don't count the recent month
     """
     df_history = df_history[:-1]
-    pdb.set_trace()
     if para2 > 0:
         df_history = df_history.tail(para2)
 
@@ -109,3 +108,25 @@ def find_history_high(df, name,  code, latest_n_days, result_list, para1, para2)
             return
 
 
+def find_price_up_and_no_touch_ma5_for_n_period(df, name, code, latest_n_days, result_list, para1, para2):
+    price_up_num = 0
+    for i in range(latest_n_days):
+        boolean = 4 > df.loc[i].p_change > 0 and df.loc[i].ma5 < df.loc[i].low \
+                  and df.loc[i].low > df.loc[i+1].low
+        if not boolean:
+            if price_up_num >= 2:
+                result_list.append(tuple((name, code, df.loc[i - 1].date,
+                                          df.loc[i - price_up_num].date,
+                                          price_up_num, 0)))
+                return
+            else:
+                price_up_num = 0
+        else:
+            price_up_num = price_up_num + 1
+
+    if price_up_num >= 2:
+        result_list.append(tuple((name, code, df.loc[i - 1].date,
+                                  df.loc[i - price_up_num - 1].date,
+                                  price_up_num, 0)))
+
+    return True

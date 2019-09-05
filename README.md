@@ -70,3 +70,7 @@ bind two search together:
 2: calculate history high and one year high, generate file in result folder
 3: calculate w-shape, generate file in result folder
 4: calculate ma5 across ma10
+
+
+//  scale a column to a range. pandas array can be treated as a two d array, use to_numpy() to create such an array
+df['p_change'] = MinMaxScaler().fit_transform(df[['p_change']].to_numpy())

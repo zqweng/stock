@@ -5,27 +5,6 @@ from pathlib import Path
 import pdb
 
 
-def find_price_up_for_n_period(df, name, code, latest_n_days, result_list, para1, para2):
-    price_up_num = 0
-    for i in range(latest_n_days):
-        if df.loc[i].p_change <= 0:
-            if price_up_num >= para1:
-                result_list.append(tuple((name, code, df.loc[i - 1].date,
-                                          df.loc[i - price_up_num - 1].date,
-                                          price_up_num, 0)))
-                return
-            else:
-                price_up_num = 0
-        else:
-            price_up_num = price_up_num + 1
-
-    if price_up_num >= para1:
-        result_list.append(tuple((name, code, df.loc[i - 1].date,
-                                  df.loc[i - price_up_num - 1].date,
-                                  price_up_num, 0)))
-
-    return True
-
 def find_price_up_for_n_period(df, name,  code, latest_n_days, result_list, para1, para2):
     price_up_num = 0
     for i in range(latest_n_days):
@@ -155,7 +134,7 @@ def find_price_go_up_for_n_period(df, name,  code, latest_n_days, result_list, p
         elif para1 == 'ma10':
             cur_price = df.loc[i].ma10
             last_price = df.loc[i+1].ma10
-        elif para2 == 'ma20':
+        elif para1 == 'ma20':
             cur_price = df.loc[i].ma20
             last_price = df.loc[i+1].ma20
 
