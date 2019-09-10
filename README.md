@@ -74,3 +74,10 @@ bind two search together:
 
 //  scale a column to a range. pandas array can be treated as a two d array, use to_numpy() to create such an array
 df['p_change'] = MinMaxScaler().fit_transform(df[['p_change']].to_numpy())
+
+
+对于一个DataFrame A，A.loc[k]是读取A中index为k的那一行。A.iloc[k]是读取A中的第k行。
+
+MinMaxScaler
+X_std = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
+X_scaled = X_std * (max - min) + min
