@@ -13,6 +13,7 @@ import pandas as pd
 from pathlib import Path
 # Feature Scaling
 from sklearn.preprocessing import MinMaxScaler
+from pathlib import Path
 
 def create_new_record(df, predicted_price):
      df_new = df[['date','close','p_change']]
@@ -69,7 +70,8 @@ def get_training_data(training_set, sc, timestep, test_num):
 sc = MinMaxScaler(feature_range = (0,1))    
 
 # Importing the trainging set
-dataset_train = pd.read_csv("c:\\Users\\johnny\\stockdata-bao\\day\\002216.csv")
+tick_dir = Path().joinpath("..", "..", "stockdata-bao", "day", "002216.csv")
+dataset_train = pd.read_csv(tick_dir)
 training_set = dataset_train.iloc[:,1:2]
 
 X_train, y_train, X_test, real_stock_price = get_training_data(training_set, sc, 60, 30)

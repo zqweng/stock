@@ -69,7 +69,9 @@ def create_df_from_bao_rs(rs):
 
     df_result = pd.DataFrame(data_list, columns=rs.fields)
     df_result = df_result[['date', 'open', 'high', 'low', 'close', 'volume', 'turn', 'pctChg']]
-    df_result.columns = ['date', 'open', 'high', 'low', 'close', 'volume', 'turn', 'p_change']
+    df_result.columns = ['date',  'close', 'open', 'high', 'low', 'volume', 'turn', 'p_change']
+    df_result.set_index('date', inplace=True)
+    df_result.sort_index(ascending=False, inplace=True)
     return df_result
 
 """
@@ -138,6 +140,8 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
 
         df_stock_joined.to_csv(hist_file)
 
+        #pdb.set_trace()
+
 def modify_df(df):
     df = df[['close', 'open', 'high', 'low', 'volume', 'turn', 'p_change']]
     return df.sort_index(ascending=False)
@@ -146,7 +150,5 @@ def modify_df(df):
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
     #load_history(tick_dir, 'basic-no3.csv', 'm')
-    #load_history(tick_dir, 'basic-no3.csv', 'd')
-    update_history_with_callback(tick_dir, 'basic-no3.csv',
-                                 modify_df,
-                                 'd')
+    load_history(tick_dir, 'basic-no3.csv', 'd')
+    #update_history_with_callback(tick_dir, 'basic-no3.csv', modify_df, 'd')
