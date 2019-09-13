@@ -81,3 +81,11 @@ df['p_change'] = MinMaxScaler().fit_transform(df[['p_change']].to_numpy())
 MinMaxScaler
 X_std = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
 X_scaled = X_std * (max - min) + min
+
+one mistake easily made:
+df.set_index('date'), do not set inplace=True
+for row in df.itertuples:
+    row.index = xxx,    should be row.Index this Index is the label of the element in tuples
+
+dataframe idxmax():
+Return index of first occurrence of maximum over requested axis

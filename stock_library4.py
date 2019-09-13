@@ -107,6 +107,31 @@ def find_history_high(df, name,  code, latest_n_days, result_list, para1, para2)
             result_list.append(tuple((name, code, row.date, 0, 0, latest_n_days)))
             return
 
+def find_history_high_v2(df, name,  code, latest_n_days, result_list, para1, para2):
+    """
+    the original index was int, we change it to date and sort it in ascending order
+    :param df:
+    :param name:
+    :param code:
+    :param latest_n_days: size of this dataframe, if 0, whole dataframe
+    :param result_list:
+    :param para1: in recent number of days, price execeeds the history
+    :param para2: none
+    :return:
+    """
+    print ('code ', code)
+    df_recent = df[:para1]
+    df_history = df[para1:]
+    highest_price_in_history = df_history['high'].max()
+    df_recent_sorted = df_recent.sort_values('high', ascending=False)
+    print ('start comparison')
+    for row in df_recent_sorted.itertuples():
+
+        if row.high <= highest_price_in_history:
+            continue
+
+        result_list.append(tuple((name, code, row.date, 0, 0, para1)))
+        return
 
 def find_price_up_and_no_touch_ma5_for_n_period(df, name, code, latest_n_days, result_list, para1, para2):
     price_up_num = 0
@@ -125,8 +150,8 @@ def find_price_up_and_no_touch_ma5_for_n_period(df, name, code, latest_n_days, r
             price_up_num = price_up_num + 1
 
     if price_up_num >= 2:
-        result_list.append(tuple((name, code, df.loc[i - 1].date,
-                                  df.loc[i - price_up_num - 1].date,
+        result_list.append(tuple((name, code, df.loc[i].date,
+                                  df.loc[i + 1 - price_up_num].date,
                                   price_up_num, 0)))
 
     return True

@@ -138,8 +138,12 @@ def find_price_go_up_for_n_period(df, name,  code, latest_n_days, result_list, p
             cur_price = df.loc[i].ma20
             last_price = df.loc[i+1].ma20
 
-        if cur_price <= last_price:
-            return
+        if para1 != 'p_change':
+            if cur_price <= last_price:
+                return
+        else:
+            if df.loc[i].p_change <= 0:
+                return
 
     result_list.append(tuple((name, code, df.loc[0].date, df.loc[latest_n_days - 1].date,
                                latest_n_days, 0)))
@@ -171,7 +175,7 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
     result_list = []
 
     for stock_row in df.itertuples():
-        stock_code = stock_row.code
+        stock_code = stock_row.Index
         #print('index is ', stock_code, 'num of stock is ', stock_num)
         stock_num = stock_num + 1
 
@@ -183,7 +187,6 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
             print('file', csv_file, 'does not exist, skip it')
             continue
 
-        #stock_df = pd.read_csv(os.path.join(hist_dir, csv_file), nrows=latest_n_days + 1)
         stock_df = pd.read_csv(os.path.join(hist_dir, csv_file))
 
         if len(stock_df.index) < min_period:
@@ -194,12 +197,14 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
             print('failed to get history file ', stock_code)
             continue
 
-        #pdb.set_trace()
+        if latest_n_days == 0:
+            frame_size = len(stock_df.index)
+        else:
+            frame_size = latest_n_days + 1
 
-        if len(stock_df.index) < latest_n_days + 1:
-            continue
+        print('frame_size ', frame_size)
 
-        callback(stock_df.head(latest_n_days + 1), stock_row.name, stock_code, latest_n_days, result_list, para1, para2)
+        callback(stock_df.head(frame_size), stock_row.name, stock_code, latest_n_days, result_list, para1, para2)
 
     result_df = pd.DataFrame(result_list, columns=['name', 'code', 'start_date', 'end_date', 'days', 'p_change'])
     result_df.code = result_df.code.astype('str')
