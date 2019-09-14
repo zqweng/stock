@@ -69,9 +69,10 @@ def create_df_from_bao_rs(rs):
 
     df_result = pd.DataFrame(data_list, columns=rs.fields)
     df_result = df_result[['date', 'open', 'high', 'low', 'close', 'volume', 'turn', 'pctChg']]
-    df_result.columns = ['date',  'close', 'open', 'high', 'low', 'volume', 'turn', 'p_change']
     df_result.set_index('date', inplace=True)
     df_result.sort_index(ascending=False, inplace=True)
+    columns = ['close', 'open', 'high', 'low', 'volume', 'turn', 'p_change']
+    df_result = df_result.reindex(columns=columns)
     return df_result
 
 """
@@ -146,9 +147,25 @@ def modify_df(df):
     df = df[['close', 'open', 'high', 'low', 'volume', 'turn', 'p_change']]
     return df.sort_index(ascending=False)
 
+def add_ma(df):
+    return mylib3.ma(df)
+
+def reset_columns(df):
+    #first, rename columns with corret names.
+    df.columns = ['open', 'high', 'low', 'close', 'volume', 'turn', 'p_change']
+
+    #secondly, put 'close' before 'open'
+    columns = ['close', 'open', 'high', 'low', 'volume', 'turn', 'p_change']
+    df_new = df.reindex(columns=columns)
+    return df_new
+
+def drop_zero_volume(df):
+    df = df.loc[df['volume'] == ]
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
     #load_history(tick_dir, 'basic-no3.csv', 'm')
-    load_history(tick_dir, 'basic-no3.csv', 'd')
+    #load_history(tick_dir, 'basic-no3.csv', 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', modify_df, 'd')
+    update_history_with_callback(tick_dir, 'basic-no3.csv', add_ma, 'd')
+    #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')

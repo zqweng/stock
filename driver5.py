@@ -28,6 +28,14 @@ def get_current_price_up_periods():
     df_result = myapi.get_current_price_up_periods(df)
     df_result.to_csv(Path().joinpath('result', 'current_price_up.csv'))
 
+def get_current_no_touch_ma5_periods():
+    stock_list_file = 'basic-no3.csv'
+    # stock_list_file = 'mystocklist-detail.csv'
+    df = myapi.read_csv(stock_list_file)
+    df_result = myapi.get_current_no_touch_ma5_periods(df)
+    df_result.to_csv(Path().joinpath('result', 'current_no_touch_ma5.csv'))
+
 if __name__ == '__main__':
     #get_no_toch_ma5()
-    get_current_price_up_periods()
+    #get_current_price_up_periods()
+    get_current_no_touch_ma5_periods()

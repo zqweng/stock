@@ -150,6 +150,20 @@ def get_current_price_up_periods(df):
     df_result.to_csv(tmpfile)
     return df_result
 
+def get_current_no_touch_ma5_periods(df):
+    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    df_result = mylib2.hist_callback(df, tick_dir, 60, mylib5.find_current_no_touch_ma5_for_n_period,
+                                     60,
+                                     0,
+                                     60)
+    df_result = fill_columns(df, df_result)
+    str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    tmpfile = Path().joinpath('tmp', 'get_current_no_touch_ma5-' + str_time + '.csv')
+    df_result = rank_stock(df_result)
+    df_result.sort_values('days', inplace=True, ascending=False)
+    df_result.to_csv(tmpfile)
+    return df_result
+
 def read_csv(stock_list_file):
     df = pd.read_csv(Path().joinpath(stock_list_file), converters={'code': lambda x: str(x)})
     df.set_index('code', inplace=True)

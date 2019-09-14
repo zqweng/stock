@@ -89,3 +89,10 @@ for row in df.itertuples:
 
 dataframe idxmax():
 Return index of first occurrence of maximum over requested axis
+
+moving average calculate:
+pandas rolling method, take a window size of k and perform mathematical operation on it
+pd['close'].rolling(3).mean()
+
+df_old = df[:-2].copy()
+if you dont call copy(), df_old will have a copy flag internally, in the future if you want to make some changes on df_old, it will show a warning

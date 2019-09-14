@@ -8,6 +8,6 @@ import driver5 as dr5
 #dr5.get_w_shape()
 #dr5.get_no_toch_ma5()
 #hh.get_history_high_v2()
-hh.get_one_year_high_v2()
-
+#hh.get_one_year_high_v2()
+hh.get_half_year_high_v2()
 print('finish')
