@@ -96,3 +96,10 @@ pd['close'].rolling(3).mean()
 
 df_old = df[:-2].copy()
 if you dont call copy(), df_old will have a copy flag internally, in the future if you want to make some changes on df_old, it will show a warning
+
+reindex()
+conform dataframe to new index with optional filling logic, placing NA/NaN in locations having no value in the previous index.
+
+dataframe.dtypes
+return a Series with the datatype of each column
+

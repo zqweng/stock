@@ -61,6 +61,13 @@ def find_sub_hist_dir(hist_dir, ktype_val):
 
     return hist_dir
 
+"""
+This function perform the following functions:
+1: create a daatframe and fill the stock data into it
+2: remove the row with zero volume
+3: move the volume 'close' to the front of 'open' (reindex)
+4: rename pctChg to p_change
+"""
 def create_df_from_bao_rs(rs):
     data_list = []
     while (rs.error_code == '0') & rs.next():
@@ -68,11 +75,16 @@ def create_df_from_bao_rs(rs):
         data_list.append(rs.get_row_data())
 
     df_result = pd.DataFrame(data_list, columns=rs.fields)
+    df_result = df_result.loc[df_result['volume'] != '0']
+    if len(df_result.index) == 0:
+        return None
+
     df_result = df_result[['date', 'open', 'high', 'low', 'close', 'volume', 'turn', 'pctChg']]
     df_result.set_index('date', inplace=True)
-    df_result.sort_index(ascending=False, inplace=True)
-    columns = ['close', 'open', 'high', 'low', 'volume', 'turn', 'p_change']
+    #df_result.sort_index(ascending=False, inplace=True)
+    columns = ['close', 'open', 'high', 'low', 'volume', 'turn', 'pctChg']
     df_result = df_result.reindex(columns=columns)
+    df_result.columns = ['close', 'open', 'high', 'low', 'volume', 'turn', 'p_change']
     return df_result
 
 """
@@ -134,20 +146,23 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
 
         df_from_network = create_df_from_bao_rs(rs)
 
+        if df_from_network is None:
+            print('discard idle data')
+            continue
+
         if not df_stock_hist.empty:
             df_stock_hist.set_index('date', inplace=True)
-
-        df_stock_joined = pd.concat([df_from_network, df_stock_hist])
-
-        df_stock_joined.to_csv(hist_file)
+            df_from_network = mylib3.ma_update(df_stock_hist.head(20).copy(), df_from_network)
+            df_stock_joined = pd.concat([df_from_network, df_stock_hist])
+            df_stock_joined.to_csv(hist_file)
+        else:
+            df_from_network = mylib3.ma(df_from_network)
+            df_from_network.to_csv(hist_file)
 
         #pdb.set_trace()
 
-def modify_df(df):
-    df = df[['close', 'open', 'high', 'low', 'volume', 'turn', 'p_change']]
-    return df.sort_index(ascending=False)
-
 def add_ma(df):
+    df = df.loc[df['volume'] != 0]
     return mylib3.ma(df)
 
 def reset_columns(df):
@@ -160,12 +175,13 @@ def reset_columns(df):
     return df_new
 
 def drop_zero_volume(df):
-    df = df.loc[df['volume'] == ]
+    df = df.loc[df['volume'] != 0]
+    return df
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
     #load_history(tick_dir, 'basic-no3.csv', 'm')
-    #load_history(tick_dir, 'basic-no3.csv', 'd')
-    #update_history_with_callback(tick_dir, 'basic-no3.csv', modify_df, 'd')
-    update_history_with_callback(tick_dir, 'basic-no3.csv', add_ma, 'd')
+    load_history(tick_dir, 'basic-no3.csv', 'd')
+    #update_history_with_callback(tick_dir, 'basic-no3.csv', add_ma, 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')
+    #update_history_with_callback(tick_dir, 'basic-no3.csv', drop_zero_volume, 'd')
