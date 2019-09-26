@@ -5,3 +5,4 @@ venv/Include/
 venv/Lib/
 /venv/
 /tmp/
+.idea
