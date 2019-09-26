@@ -202,7 +202,7 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
         else:
             frame_size = latest_n_days + 1
 
-        print('frame_size ', frame_size)
+        #print('frame_size ', frame_size)
 
         callback(stock_df.head(frame_size), stock_row.name, stock_code, latest_n_days, result_list, para1, para2)
 

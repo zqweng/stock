@@ -2,7 +2,9 @@ import pandas as pd
 import os
 from pathlib import Path
 import pdb
-def find_w_shape(df, name,  code, latest_n_days, result_list, para1, para2):
+
+
+def find_w_shape(df, name, code, latest_n_days, result_list, para1, para2):
     """
     the original index was int, we change it to date and sort it in ascending order
     :param df:
@@ -16,12 +18,10 @@ def find_w_shape(df, name,  code, latest_n_days, result_list, para1, para2):
     """
     df.set_index('date', inplace=True)
     df.sort_index(ascending=True, inplace=True)
-    print('find w shape for ', code, ' starting ', df.index[0])
 
     lowest_index = df[['low']].idxmin()
     lowest_price = df[['low']].min()
     df_after_lowest = df[df.index > lowest_index.low]
-
 
     first_rise_percentage = 0
     first_peek_index = None
@@ -69,7 +69,7 @@ def find_w_shape(df, name,  code, latest_n_days, result_list, para1, para2):
     return
 
 
-def find_history_high(df, name,  code, latest_n_days, result_list, para1, para2):
+def find_history_high(df, name, code, latest_n_days, result_list, para1, para2):
     """
     the original index was int, we change it to date and sort it in ascending order
     :param df:
@@ -82,7 +82,7 @@ def find_history_high(df, name,  code, latest_n_days, result_list, para1, para2)
     :return:
     """
 
-    #print('find history record for ', code)
+    # print('find history record for ', code)
 
     history_dir = Path().joinpath('..', '..', 'stockdata-bao', 'month')
     df_history = pd.read_csv((os.path.join(history_dir, code + '.csv')))
@@ -99,7 +99,7 @@ def find_history_high(df, name,  code, latest_n_days, result_list, para1, para2)
     for row in df.head(latest_n_days).itertuples():
         lower = False
         for row_history in df_history.itertuples():
-            #print ('price ', row.high, ' and month high is ', row_history.high)
+            # print ('price ', row.high, ' and month high is ', row_history.high)
             if row.high <= row_history.high:
                 lower = True
                 break
@@ -107,7 +107,8 @@ def find_history_high(df, name,  code, latest_n_days, result_list, para1, para2)
             result_list.append(tuple((name, code, row.date, 0, 0, latest_n_days)))
             return
 
-def find_history_high_v2(df, name,  code, latest_n_days, result_list, para1, para2):
+
+def find_history_high_v2(df, name, code, latest_n_days, result_list, para1, para2):
     """
     the original index was int, we change it to date and sort it in ascending order
     :param df:
@@ -119,12 +120,10 @@ def find_history_high_v2(df, name,  code, latest_n_days, result_list, para1, par
     :param para2: none
     :return:
     """
-    print ('code ', code)
     df_recent = df[:para1]
     df_history = df[para1:]
     highest_price_in_history = df_history['high'].max()
     df_recent_sorted = df_recent.sort_values('high', ascending=False)
-    print ('start comparison')
     for row in df_recent_sorted.itertuples():
 
         if row.high <= highest_price_in_history:
@@ -133,11 +132,12 @@ def find_history_high_v2(df, name,  code, latest_n_days, result_list, para1, par
         result_list.append(tuple((name, code, row.date, 0, 0, para1)))
         return
 
+
 def find_price_up_and_no_touch_ma5_for_n_period(df, name, code, latest_n_days, result_list, para1, para2):
     price_up_num = 0
     for i in range(latest_n_days):
         boolean = 4 > df.loc[i].p_change > 0 and df.loc[i].ma5 < df.loc[i].low \
-                  and df.loc[i].low > df.loc[i+1].low
+                  and df.loc[i].low > df.loc[i + 1].low
         if not boolean:
             if price_up_num >= 2:
                 result_list.append(tuple((name, code, df.loc[i - 1].date,
@@ -155,3 +155,66 @@ def find_price_up_and_no_touch_ma5_for_n_period(df, name, code, latest_n_days, r
                                   price_up_num, 0)))
 
     return True
+
+
+def find_history_high_volume(df, name, code, latest_n_days, result_list, para1, para2):
+    """
+    the original index was int, we change it to date and sort it in ascending order
+    :param df:
+    :param name:
+    :param code:
+    :param latest_n_days: size of this dataframe, if 0, whole dataframe
+    :param result_list:
+    :param para1: in recent number of days, price execeeds the history
+    :param para2: none
+    :return:
+    """
+    df = df[:-30]
+    df_recent = df[:para1]
+    df_history = df[para1:]
+    highest_volume_in_history = df_history['volume'].max()
+    df_recent_sorted = df_recent.sort_values('volume', ascending=False)
+    for row in df_recent_sorted.itertuples():
+
+        if row.volume <= highest_volume_in_history:
+            continue
+
+        result_list.append(tuple((name, code, row.date, 0, 0, para1)))
+        return
+
+
+"""
+   in n periods, there is only one occurrence of the history high volume
+"""
+
+
+def find_first_history_high_volume(df, name, code, latest_n_days, result_list, para1, para2):
+    """
+    the original index was int, we change it to date and sort it in ascending order
+    :param df:
+    :param name:
+    :param code:
+    :param latest_n_days: size of this dataframe, if 0, whole dataframe
+    :param result_list:
+    :param para1: in recent number of days, price execeeds the history
+    :param para2: none
+    :return:
+    """
+    df = df[:-30]
+    df_recent = df[:para1]
+    df_history = df[para1:]
+    highest_volume_in_history = df_history['volume'].max()
+    df_recent_sorted = df_recent.sort_values('volume', ascending=False)
+    date = ''
+    for row in df_recent_sorted.itertuples():
+
+        if row.volume <= highest_volume_in_history:
+            continue
+        if date != '':
+            return
+        else:
+            date = row.date
+
+    if date != '':
+        result_list.append(tuple((name, code, date, 0, 0, para1)))
+    return

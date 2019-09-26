@@ -103,3 +103,7 @@ conform dataframe to new index with optional filling logic, placing NA/NaN in lo
 dataframe.dtypes
 return a Series with the datatype of each column
 
+如果不是主升浪，买股一定要在20日线附近买
+不要买正在做顶的股票，
+股票价格不能离60日太远，也不能离20日太远。主升浪除外。
+离20日和60日的距离是根据股性来决定的。
