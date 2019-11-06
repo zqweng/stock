@@ -5,6 +5,7 @@ import numpy as np
 import stock_library2 as mylib2
 import stock_library4 as mylib4
 import stock_library5 as mylib5
+import stock_library6 as mylib6
 from pathlib import Path
 from sklearn.preprocessing import MinMaxScaler
 import pdb
@@ -203,6 +204,45 @@ def get_first_history_high_volume_in_n(df, num_of_days, num_of_days_periods=0):
     df_result = fill_columns(df, df_result)
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     tmpfile = Path().joinpath('tmp', 'get_first_history_high_volume-' + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    df_result = rank_stock(df_result)
+    df_result.to_csv(tmpfile)
+    return df_result
+
+"""
+   This function calculate history high from day trading table instead of month trading table
+"""
+def get_price_sum_in_n(df, is_price_up, min_price_range, num_of_days_periods):
+    result_string = ''
+    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_up_sum_for_n_period,
+                                     is_price_up,
+                                     min_price_range,
+                                     60)
+
+    #df_result = fill_columns(df, df_result)
+    str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    tmpfile = Path().joinpath('tmp', 'get_price_sum_in_n-' + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    #df_result = rank_stock(df_result)
+    #pdb.set_trace()
+    df_result.sort_values('p_change', inplace=True, ascending=not is_price_up)
+    df_result.set_index('code', inplace=True)
+    df_result.to_csv(tmpfile)
+    return df_result
+
+"""
+   This function calculate history high from day trading table instead of month trading table
+"""
+def get_price_continuous_down_in_n(df, num_of_days_down, price_down_sum, num_of_days_periods):
+    result_string = ''
+    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_continuous_down_for_n_period,
+                                     num_of_days_down,
+                                     price_down_sum,
+                                     60)
+
+    df_result = fill_columns(df, df_result)
+    str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    tmpfile = Path().joinpath('tmp', 'get_price_continuous_down_in_n-' + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
     df_result = rank_stock(df_result)
     df_result.to_csv(tmpfile)
     return df_result

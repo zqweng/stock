@@ -4,5 +4,4 @@ result/.ipynb_checkpoints/
 venv/Include/
 venv/Lib/
 /venv/
-/tmp/
 .idea

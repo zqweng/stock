@@ -176,7 +176,7 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
 
     for stock_row in df.itertuples():
         stock_code = stock_row.Index
-        #print('index is ', stock_code, 'num of stock is ', stock_num)
+        print('index is ', stock_code, 'num of stock is ', stock_num)
         stock_num = stock_num + 1
 
         if stock_code == '600161':

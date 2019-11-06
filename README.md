@@ -107,3 +107,16 @@ return a Series with the datatype of each column
 不要买正在做顶的股票，
 股票价格不能离60日太远，也不能离20日太远。主升浪除外。
 离20日和60日的距离是根据股性来决定的。
+
+How to use this software
+1) Update historical data:
+we have two libraries (tushare and baostock) that provide this functions. Baostock provides better data (提供复权数据).
+a) To use baostock, from load_from_baostock.py, call the following functions to load day/week/month data,
+   load_history(tick_dir, 'basic-no3.csv', 'd')
+   load_history(tick_dir, 'basic-no3.csv', 'w')
+   load_history(tick_dir, 'basic-no3.csv', 'm')
+   Data is located in "home/stockdata-bao"
+
+b) To use tushare, from update_history, call the following functions to load day/wee data, month is not included.
+
+2)

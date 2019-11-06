@@ -29,7 +29,7 @@ def find_price_up_sum_for_n_period(df, name, code, latest_n_days, result_list, p
     if num_of_days > 0:
         result_list.append(tuple((name, code, df.loc[index].date,
                                   df.loc[index + num_of_days - 1].date,
-                                  p_chane_sum, 0)))
+                                  num_of_days, p_chane_sum)))
     return True
 
 
