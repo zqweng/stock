@@ -119,4 +119,11 @@ a) To use baostock, from load_from_baostock.py, call the following functions to 
 
 b) To use tushare, from update_history, call the following functions to load day/wee data, month is not included.
 
-2)
+2) Get the max price up/down range which must be above "price_up_sum" if "is_price_up" is ture, or vice versa if
+"is_price_up" is false in a period specified by the "period_of_days" for the list of stocks specified by "stock_list" or "df".
+
+Example:
+get the list of stocks that rise 15% and down -10% in recent 20 days
+
+df = dr5.get_price_sum_in_n(price_up_sum=15, period_of_days=20)
+df1 = dr5.get_price_sum_in_n(df, is_price_up=False, price_up_sum=-10, period_of_days=20)

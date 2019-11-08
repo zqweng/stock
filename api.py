@@ -246,3 +246,54 @@ def get_price_continuous_down_in_n(df, num_of_days_down, price_down_sum, num_of_
     df_result = rank_stock(df_result)
     df_result.to_csv(tmpfile)
     return df_result
+
+"""
+   This function calculate history high from day trading table instead of month trading table
+"""
+def get_ma5_across_ma10(df, cross_above, num_of_days_periods):
+    result_string = ''
+    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_ma5_cross_ma10,
+                                     cross_above,
+                                     0,
+                                     60)
+
+    str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    tmpfile = Path().joinpath('tmp', 'get_ma5_across_ma10-' + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    #df_result = rank_stock(df_result)
+    #pdb.set_trace()
+    df_result.set_index('code', inplace=True)
+    df_result.to_csv(tmpfile)
+    return df_result
+
+def get_price_above(df, type, num_of_days_periods):
+    result_string = ''
+    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_above,
+                                     type,
+                                     0,
+                                     60)
+
+    str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    tmpfile = Path().joinpath('tmp', 'get_price_above-' + type + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    #df_result = rank_stock(df_result)
+    #pdb.set_trace()
+    df_result.set_index('code', inplace=True)
+    df_result.to_csv(tmpfile)
+    return df_result
+
+def get_price_up_with_percentage(df, percentage, num_of_days_periods):
+    result_string = ''
+    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_up_with_percentage,
+                                     percentage,
+                                     0,
+                                     60)
+
+    str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    tmpfile = Path().joinpath('tmp', 'get_price_up_with_percentage-'  + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    #df_result = rank_stock(df_result)
+    #pdb.set_trace()
+    df_result.set_index('code', inplace=True)
+    df_result.to_csv(tmpfile)
+    return df_result
