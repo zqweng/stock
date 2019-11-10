@@ -13,6 +13,15 @@ import pdb
 def get_data_dir():
     return 'stockdata-bao'
 
+def getPath(period_type):
+    path_str = "../../" + get_data_dir() + "/" + period_type
+    if Path(path_str).exists():
+        tick_dir = Path(path_str)
+    else:
+        tick_dir = Path("../" + path_str)
+
+    return tick_dir
+
 def get_latest_sum_of_week_price_up(stock_list_file, num_of_weeks):
     # stock_list_file = 'basic-no3.csv'
     # num_of_weeks = 2
@@ -28,15 +37,6 @@ def get_latest_sum_of_week_price_up(stock_list_file, num_of_weeks):
                                      20)
     return result_df
 
-
-def get_latest_n_periods_price_up(df, num_of_periods, type, period_type):
-    result_string = ''
-    tick_dir = Path().joinpath('..', '..', get_data_dir(), type)
-    result_df = mylib2.hist_callback(df, tick_dir, num_of_periods, mylib2.find_price_go_up_for_n_period,
-                                     period_type,
-                                     0,
-                                     20)
-    return result_df
 
 
 def fill_columns(df, df_result):
@@ -166,7 +166,10 @@ def get_current_no_touch_ma5_periods(df):
     return df_result
 
 def read_csv(stock_list_file):
-    df = pd.read_csv(Path().joinpath(stock_list_file), converters={'code': lambda x: str(x)})
+    if os.path.isfile(stock_list_file):
+        df = pd.read_csv(Path().joinpath(stock_list_file), converters={'code': lambda x: str(x)})
+    else:
+        df = pd.read_csv(Path().joinpath('..', stock_list_file), converters={'code': lambda x: str(x)})
     df.set_index('code', inplace=True)
     return df
 
@@ -211,17 +214,16 @@ def get_first_history_high_volume_in_n(df, num_of_days, num_of_days_periods=0):
 """
    This function calculate history high from day trading table instead of month trading table
 """
-def get_price_sum_in_n(df, is_price_up, min_price_range, num_of_days_periods):
-    result_string = ''
-    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+def get_price_sum_in_n(df, is_price_up, min_price_range, min_day_range, num_of_days_periods, period_type):
+    tick_dir = getPath(period_type)
     df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_up_sum_for_n_period,
                                      is_price_up,
-                                     min_price_range,
+                                     (min_price_range, min_day_range),
                                      60)
 
     #df_result = fill_columns(df, df_result)
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    tmpfile = Path().joinpath('tmp', 'get_price_sum_in_n-' + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    tmpfile = Path().joinpath('tmp', 'get_price_sum_in_n-' + period_type + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
     #df_result = rank_stock(df_result)
     #pdb.set_trace()
     df_result.sort_values('p_change', inplace=True, ascending=not is_price_up)
@@ -232,9 +234,9 @@ def get_price_sum_in_n(df, is_price_up, min_price_range, num_of_days_periods):
 """
    This function calculate history high from day trading table instead of month trading table
 """
-def get_price_continuous_down_in_n(df, num_of_days_down, price_down_sum, num_of_days_periods):
+def get_price_continuous_down_in_n(df, num_of_days_down, price_down_sum, num_of_days_periods, period_type):
     result_string = ''
-    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    tick_dir = getPath(period_type)
     df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_continuous_down_for_n_period,
                                      num_of_days_down,
                                      price_down_sum,
@@ -242,7 +244,7 @@ def get_price_continuous_down_in_n(df, num_of_days_down, price_down_sum, num_of_
 
     df_result = fill_columns(df, df_result)
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    tmpfile = Path().joinpath('tmp', 'get_price_continuous_down_in_n-' + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    tmpfile = Path().joinpath('tmp', 'get_price_continuous_down_in_n-' + period_type  + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
     df_result = rank_stock(df_result)
     df_result.to_csv(tmpfile)
     return df_result
@@ -250,50 +252,61 @@ def get_price_continuous_down_in_n(df, num_of_days_down, price_down_sum, num_of_
 """
    This function calculate history high from day trading table instead of month trading table
 """
-def get_ma5_across_ma10(df, cross_above, num_of_days_periods):
+def get_ma5_across_ma10(df, cross_above, num_of_days_periods, period_type):
     result_string = ''
-    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    tick_dir = getPath(period_type)
     df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_ma5_cross_ma10,
                                      cross_above,
                                      0,
                                      60)
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    tmpfile = Path().joinpath('tmp', 'get_ma5_across_ma10-' + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    tmpfile = Path().joinpath('tmp', 'get_ma5_across_ma10-' + period_type + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
     #df_result = rank_stock(df_result)
     #pdb.set_trace()
     df_result.set_index('code', inplace=True)
     df_result.to_csv(tmpfile)
     return df_result
 
-def get_price_above(df, type, num_of_days_periods):
+def get_price_above(df, type, num_of_days_periods, period_type):
     result_string = ''
-    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    tick_dir = getPath(period_type)
     df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_above,
                                      type,
                                      0,
                                      60)
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    tmpfile = Path().joinpath('tmp', 'get_price_above-' + type + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    tmpfile = Path().joinpath('tmp', 'get_price_above-' + period_type + '_' + str(num_of_days_periods) + '_days_' + '.csv')
     #df_result = rank_stock(df_result)
     #pdb.set_trace()
     df_result.set_index('code', inplace=True)
     df_result.to_csv(tmpfile)
     return df_result
 
-def get_price_up_with_percentage(df, percentage, num_of_days_periods):
+def get_price_up_with_percentage(df, percentage, num_of_days_periods, period_type):
     result_string = ''
-    tick_dir = Path().joinpath('..', '..', get_data_dir(), 'day')
+    tick_dir = getPath(period_type)
     df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_up_with_percentage,
                                      percentage,
                                      0,
                                      60)
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    tmpfile = Path().joinpath('tmp', 'get_price_up_with_percentage-'  + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    tmpfile = Path().joinpath('tmp', 'get_price_up_with_percentage-' + period_type + '_' + str(num_of_days_periods) + '_days_' + '.csv')
     #df_result = rank_stock(df_result)
     #pdb.set_trace()
     df_result.set_index('code', inplace=True)
     df_result.to_csv(tmpfile)
     return df_result
+
+
+
+def get_latest_n_periods_price_up(df, num_of_periods, type, period_type):
+    result_string = ''
+    tick_dir = Path().joinpath('..', '..', get_data_dir(), type)
+    result_df = mylib2.hist_callback(df, tick_dir, num_of_periods, mylib2.find_price_go_up_for_n_period,
+                                     period_type,
+                                     0,
+                                     20)
+    return result_df

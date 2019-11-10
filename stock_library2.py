@@ -4,6 +4,7 @@ import pandas as pd
 from pathlib import Path
 import pdb
 
+head_offset = 0
 
 def find_price_up_for_n_period(df, name,  code, latest_n_days, result_list, para1, para2):
     price_up_num = 0
@@ -203,6 +204,9 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
             frame_size = latest_n_days + 1
 
         #print('frame_size ', frame_size)
+        if head_offset > 0:
+            stock_df = stock_df[head_offset:]
+            stock_df.reset_index(drop=True, inplace=True)
 
         callback(stock_df.head(frame_size), stock_row.name, stock_code, latest_n_days, result_list, para1, para2)
 

@@ -18,14 +18,15 @@ def find_price_up_sum_for_n_period(df, name, code, latest_n_days, result_list, p
 
     ordered_list = sorted(list, key=lambda x: x[2], reverse=para1)
     index, num_of_days, p_chane_sum = ordered_list[0]
+    if para2[1] != 0 and num_of_days < para2[1]:
+        return True
 
-    if para2 != 0:
+    if para2[0] != 0:
         # para1 true means up is needed and the p_change_sum must be greater than para2
         # same for the reverse case
-        if (para1 and para2 > p_chane_sum) or (not para1 and para2 < p_chane_sum):
+        if (para1 and para2[0] > p_chane_sum) or (not para1 and para2[0] < p_chane_sum):
             return True
 
-    # pdb.set_trace()
     if num_of_days > 0:
         result_list.append(tuple((name, code, df.loc[index].date,
                                   df.loc[index + num_of_days - 1].date,
