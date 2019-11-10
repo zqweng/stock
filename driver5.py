@@ -94,6 +94,17 @@ def get_price_up_with_percentage(df=None, p_change=4, period_of_days=10, stock_l
 
     return df_result
 
+def get_latest_n_periods_price_up(df=None, period_of_days=10, stock_list=None, period_type='day'):
+    if df is None and stock_list is None:
+        stock_list_file = 'basic-no3.csv'
+        # stock_list_file = 'mystocklist-detail.csv'
+        df = myapi.read_csv(stock_list_file)
+    else:
+        if stock_list is not None:
+            df = myapi.read_csv(stock_list)
+    df_result = myapi.get_latest_n_periods_price_up(df, p_change, period_of_days, period_type)
+
+    return df_result
 
 if __name__ == '__main__':
     # get_no_toch_ma5()

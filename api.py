@@ -293,7 +293,7 @@ def get_price_up_with_percentage(df, percentage, num_of_days_periods, period_typ
                                      60)
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    tmpfile = Path().joinpath('tmp', 'get_price_up_with_percentage-' + period_type + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    tmpfile = Path().joinpath('tmp', 'get_price_up_with_percentage-' + period_type + '_' + str(num_of_days_periods) + '_days_' + str_time + '.csv')
     #df_result = rank_stock(df_result)
     #pdb.set_trace()
     df_result.set_index('code', inplace=True)
