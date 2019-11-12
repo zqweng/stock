@@ -214,9 +214,9 @@ def get_first_history_high_volume_in_n(df, num_of_days, num_of_days_periods=0):
 """
    This function calculate history high from day trading table instead of month trading table
 """
-def get_price_sum_in_n(df, is_price_up, min_price_range, min_day_range, num_of_days_periods, period_type):
+def get_miminum_price_sum_in_n(df, is_price_up, min_price_range, min_day_range, num_of_days_periods, period_type):
     tick_dir = getPath(period_type)
-    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_up_sum_for_n_period,
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_minimum_price_sum_for_n_period,
                                      is_price_up,
                                      (min_price_range, min_day_range),
                                      60)
@@ -230,6 +230,23 @@ def get_price_sum_in_n(df, is_price_up, min_price_range, min_day_range, num_of_d
     df_result.set_index('code', inplace=True)
     df_result.to_csv(tmpfile)
     return df_result
+
+def get_maximum_price_sum_in_n(df, percentage, num_of_days_periods, period_type):
+    result_string = ''
+    tick_dir = getPath(period_type)
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_maximum_price_sum_for_n_period,
+                                     percentage,
+                                     0,
+                                     60)
+
+    str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    tmpfile = Path().joinpath('tmp', 'get_maximum_price_sum_in_n-' + period_type + '_' + str(num_of_days_periods) + '_days_' + str_time + '.csv')
+    #df_result = rank_stock(df_result)
+    #pdb.set_trace()
+    df_result.set_index('code', inplace=True)
+    df_result.to_csv(tmpfile)
+    return df_result
+
 
 """
    This function calculate history high from day trading table instead of month trading table

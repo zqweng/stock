@@ -37,7 +37,7 @@ def get_current_no_touch_ma5_periods():
     df_result.to_csv(Path().joinpath('result', 'current_no_touch_ma5.csv'))
 
 
-def get_price_sum_in_n(df=None, is_price_up=True, price_up_sum=0, min_day_range=0, period_of_days=10, stock_list=None, period_type='day'):
+def get_minimum_price_sum_in_n(df=None, is_price_up=True, price_up_sum=0, min_day_range=0, period_of_days=10, stock_list=None, period_type='day'):
     if df is None and stock_list is None:
         stock_list_file = 'basic-no3.csv'
         # stock_list_file = 'mystocklist-detail.csv'
@@ -45,7 +45,19 @@ def get_price_sum_in_n(df=None, is_price_up=True, price_up_sum=0, min_day_range=
     else:
         if stock_list is not None:
             df = myapi.read_csv(stock_list)
-    df_result = myapi.get_price_sum_in_n(df, is_price_up, price_up_sum, min_day_range, period_of_days, period_type)
+    df_result = myapi.get_miminum_price_sum_in_n(df, is_price_up, price_up_sum, min_day_range, period_of_days, period_type)
+
+    return df_result
+
+def get_maximum_price_sum_in_n(df=None, p_change=(4,10), period_of_days=10, stock_list=None, period_type='day'):
+    if df is None and stock_list is None:
+        stock_list_file = 'basic-no3.csv'
+        # stock_list_file = 'mystocklist-detail.csv'
+        df = myapi.read_csv(stock_list_file)
+    else:
+        if stock_list is not None:
+            df = myapi.read_csv(stock_list)
+    df_result = myapi.get_maximum_price_sum_in_n(df, p_change, period_of_days, period_type)
 
     return df_result
 
@@ -82,7 +94,7 @@ def get_price_above(df=None, type ="close above ma20", period_of_days=1, stock_l
 
     return df_result
 
-def get_price_up_with_percentage(df=None, p_change=4, period_of_days=10, stock_list=None, period_type='day'):
+def get_price_up_with_percentage(df=None, p_change=(4,10), period_of_days=10, stock_list=None, period_type='day'):
     if df is None and stock_list is None:
         stock_list_file = 'basic-no3.csv'
         # stock_list_file = 'mystocklist-detail.csv'

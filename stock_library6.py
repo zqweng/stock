@@ -10,14 +10,18 @@ para1:  determine whether we want price up or down values
 import pdb
 
 
-def find_price_up_sum_for_n_period(df, name, code, latest_n_days, result_list, para1, para2):
+def find_minimum_price_sum_for_n_period(df, name, code, latest_n_days, result_list, para1, para2):
     list = []
     for i in range(latest_n_days):
         for j in range(0, latest_n_days - i):
-            list.append((i, j, df[i: i + j + 1]["p_change"].sum()))
+            list.append((i, j + 1, df[i: i + j + 1]["p_change"].sum()))
 
     ordered_list = sorted(list, key=lambda x: x[2], reverse=para1)
     index, num_of_days, p_chane_sum = ordered_list[0]
+
+    if code == "603983":
+        pdb.set_trace()
+    # para2[1] is the least maximum days
     if para2[1] != 0 and num_of_days < para2[1]:
         return True
 
@@ -31,6 +35,24 @@ def find_price_up_sum_for_n_period(df, name, code, latest_n_days, result_list, p
         result_list.append(tuple((name, code, df.loc[index].date,
                                   df.loc[index + num_of_days - 1].date,
                                   num_of_days, p_chane_sum)))
+    return True
+
+
+def find_maximum_price_sum_for_n_period(df, name, code, latest_n_days, result_list, para1, para2):
+    list = []
+    for i in range(latest_n_days):
+        for j in range(0, latest_n_days - i):
+            list.append((i, j, df[i: i + j + 1]["p_change"].sum()))
+
+    ordered_list = sorted(list, key=lambda x: x[2])
+
+    index, num_of_days, p_chane_sum_max = ordered_list[0]
+    index1, num_of_days1, p_chane_sum_min = ordered_list[-1]
+
+    if para1[0] <= p_chane_sum_max <= para1[1] and para1[0] <= p_chane_sum_min <= para1[1]:
+        result_list.append(tuple((name, code, 0,
+                                  0,
+                                  num_of_days, 0)))
     return True
 
 
