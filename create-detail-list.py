@@ -32,6 +32,6 @@ for row in df.itertuples():
         print(row.名称)
 
 new_df = df_all[df_all['name'].isin(df['名称'])]
-new_df.to_csv('mystocklist-detail.csv')
+new_df.to_csv('newlist.csv')
 
 print('number of stocks in mystocklist-detail.csv is:', len(df.index))

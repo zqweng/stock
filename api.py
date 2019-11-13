@@ -7,6 +7,8 @@ import stock_library4 as mylib4
 import stock_library5 as mylib5
 import stock_library6 as mylib6
 from pathlib import Path
+import platform
+
 from sklearn.preprocessing import MinMaxScaler
 import pdb
 
@@ -14,13 +16,9 @@ def get_data_dir():
     return 'stockdata-bao'
 
 def getPath(period_type):
-    path_str = "../../" + get_data_dir() + "/" + period_type
-    if Path(path_str).exists():
-        tick_dir = Path(path_str)
-    else:
-        tick_dir = Path("../" + path_str)
-
-    return tick_dir
+    if platform.system() == "Windows":
+        path = Path("C:/Users/johnny/")
+    return path/get_data_dir()/period_type
 
 def get_latest_sum_of_week_price_up(stock_list_file, num_of_weeks):
     # stock_list_file = 'basic-no3.csv'
@@ -166,10 +164,9 @@ def get_current_no_touch_ma5_periods(df):
     return df_result
 
 def read_csv(stock_list_file):
-    if os.path.isfile(stock_list_file):
-        df = pd.read_csv(Path().joinpath(stock_list_file), converters={'code': lambda x: str(x)})
-    else:
-        df = pd.read_csv(Path().joinpath('..', stock_list_file), converters={'code': lambda x: str(x)})
+    if platform.system() == "Windows":
+        path = Path("C:/Users/johnny/PycharmProjects/stock-github")
+    df = pd.read_csv(path/stock_list_file, converters={'code': lambda x: str(x)})
     df.set_index('code', inplace=True)
     return df
 
