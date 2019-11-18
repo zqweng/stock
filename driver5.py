@@ -70,7 +70,7 @@ def get_price_continuous_down_in_n(df=None, price_down_sum=0, num_of_days_down=4
 
     return df_result
 
-def get_ma5_across_ma10(df=None, cross_above=True, period_of_days=10, stock_list=None, period_type='day'):
+def get_a_across_b(df=None, cross_above=True, cross_type="ma5-ma10", period_of_days=10, stock_list=None, period_type='day'):
     if df is None and stock_list is None:
         stock_list_file = 'basic-no3.csv'
         # stock_list_file = 'mystocklist-detail.csv'
@@ -78,7 +78,7 @@ def get_ma5_across_ma10(df=None, cross_above=True, period_of_days=10, stock_list
     else:
         if stock_list is not None:
             df = myapi.read_csv(stock_list)
-    df_result = myapi.get_ma5_across_ma10(df, cross_above, period_of_days, period_type)
+    df_result = myapi.get_a_across_b(df, cross_above, cross_type, period_of_days, period_type)
 
     return df_result
 
@@ -115,6 +115,30 @@ def get_latest_n_periods_price_up(df=None, period_of_days=10, stock_list=None, p
         if stock_list is not None:
             df = myapi.read_csv(stock_list)
     df_result = myapi.get_latest_n_periods_price_up(df, p_change, period_of_days, period_type)
+
+    return df_result
+
+def get_maximum_period_break_high(df=None, min_break_num=4, period_of_days=10, stock_list=None, period_type='day'):
+    if df is None and stock_list is None:
+        stock_list_file = 'basic-no3.csv'
+        #stock_list_file = 'mystocklist-detail.csv'
+        df = myapi.read_csv(stock_list_file)
+    else:
+        if stock_list is not None:
+            df = myapi.read_csv(stock_list)
+    df_result = myapi.get_maximum_period_break_high(df, min_break_num, period_of_days, period_type)
+
+    return df_result
+
+def get_history_high_price(df=None, event_to_now = 1, period_of_days=60, stock_list=None, period_type='day'):
+    if df is None and stock_list is None:
+        stock_list_file = 'basic-no3.csv'
+        #stock_list_file = 'mystocklist-detail.csv'
+        df = myapi.read_csv(stock_list_file)
+    else:
+        if stock_list is not None:
+            df = myapi.read_csv(stock_list)
+    df_result = myapi.get_history_high_price(df, event_to_now, period_of_days, period_type)
 
     return df_result
 

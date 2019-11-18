@@ -185,4 +185,4 @@ if __name__ == "__main__":
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_ma, 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', drop_zero_volume, 'd')
-    #load_history(tick_dir, 'basic-no3.csv', 'w')
+    load_history(tick_dir, 'basic-no3.csv', 'w')

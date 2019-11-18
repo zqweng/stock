@@ -168,6 +168,7 @@ def read_csv(stock_list_file):
         path = Path("C:/Users/johnny/PycharmProjects/stock-github")
     df = pd.read_csv(path/stock_list_file, converters={'code': lambda x: str(x)})
     df.set_index('code', inplace=True)
+    df["ret"] = 0
     return df
 
 
@@ -266,16 +267,16 @@ def get_price_continuous_down_in_n(df, num_of_days_down, price_down_sum, num_of_
 """
    This function calculate history high from day trading table instead of month trading table
 """
-def get_ma5_across_ma10(df, cross_above, num_of_days_periods, period_type):
+def get_a_across_b(df, cross_above, cross_type, num_of_days_periods, period_type):
     result_string = ''
     tick_dir = getPath(period_type)
-    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_ma5_cross_ma10,
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_a_cross_b,
                                      cross_above,
-                                     0,
+                                     cross_type,
                                      60)
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    tmpfile = Path().joinpath('tmp', 'get_ma5_across_ma10-' + period_type + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    tmpfile = Path().joinpath('tmp', 'get_a_across_b-' + period_type + cross_type + "-" + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
     #df_result = rank_stock(df_result)
     #pdb.set_trace()
     df_result.set_index('code', inplace=True)
@@ -324,3 +325,32 @@ def get_latest_n_periods_price_up(df, num_of_periods, type, period_type):
                                      0,
                                      20)
     return result_df
+
+def get_maximum_period_break_high(df, min_break_num, num_of_days_periods, period_type):
+    result_string = ''
+    tick_dir = getPath(period_type)
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib5.find_maximum_period_break_high,
+                                     min_break_num,
+                                     0,
+                                     60)
+
+    str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    tmpfile = Path().joinpath('tmp', 'get_maximum_period_break_high-' + period_type + '_' + str(num_of_days_periods) + '_days_' + str_time + '.csv')
+    #df_result = rank_stock(df_result)
+    #pdb.set_trace()
+    df_result.set_index('code', inplace=True)
+    df_result.to_csv(tmpfile)
+    return df_result
+
+def get_history_high_price(df, event_to_now, num_of_days_periods, period_type):
+    tick_dir = getPath(period_type)
+    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib4.find_history_high_v2,
+                                     event_to_now,
+                                     0,
+                                     60)
+
+    str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    tmpfile = Path().joinpath('tmp', 'get_history_high_price-' + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    df_result.set_index('code', inplace=True)
+    df_result.to_csv(tmpfile)
+    return df_result
