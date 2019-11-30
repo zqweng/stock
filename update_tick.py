@@ -35,5 +35,5 @@ def load_tick(stock_list_file, start_date, end_date):
 
 
 if __name__ == "__main__":
-    load_tick('mystocklist-detail.csv', '2019-08-1', '2019-08-6')
+    load_tick('mystocklist-detail.csv', '2019-11-10', '2019-11-20')
     #load_tick('basic-no3.csv','2019-08-1', '2019-08-16')

@@ -145,6 +145,7 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
             continue
 
         df_from_network = create_df_from_bao_rs(rs)
+        df_from_network = df_from_network[df_from_network.turn != '']
 
         if df_from_network is None:
             print('discard idle data')
@@ -165,6 +166,14 @@ def add_ma(df):
     df = df.loc[df['volume'] != 0]
     return mylib3.ma(df)
 
+def add_boll(df):
+    df = df.loc[df['volume'] != 0]
+    return mylib3.boll(df)
+
+def add_rsi(df):
+    df = df.loc[df['volume'] != 0]
+    return mylib3.rsi(df)
+
 def reset_columns(df):
     #first, rename columns with corret names.
     df.columns = ['open', 'high', 'low', 'close', 'volume', 'turn', 'p_change']
@@ -181,8 +190,8 @@ def drop_zero_volume(df):
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
     #load_history(tick_dir, 'basic-no3.csv', 'm')
-    load_history(tick_dir, 'basic-no3.csv', 'd')
-    #update_history_with_callback(tick_dir, 'basic-no3.csv', add_ma, 'd')
+    #load_history(tick_dir, 'basic-no3.csv', 'd')
+    #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', drop_zero_volume, 'd')
     load_history(tick_dir, 'basic-no3.csv', 'w')

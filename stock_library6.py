@@ -110,20 +110,67 @@ def check_volume_drop(df, i):
 def check_abs_pchange_less(df, i):
     return abs(df.loc[i].p_change) < abs(df.loc[i+1].p_change)
 
+def check_momentum(df, i, para1):
+    money = df.loc[i].volume * df.loc[i].close
+    return (para1[1] >= df.loc[i].p_change >= para1[0] and money/100000000 > para1[2] and
+            para1[4] >= df.loc[i].turn >= para1[3] and
+            money/100000000 * 100/df.loc[i].turn >= para1[5])
+
+def check_highest_in_n(df, i, para1):
+    return df.loc[i].close > max(max(df[1:para1]["close"]), df.loc[i].ma20)
+
+def check_ma5_gt_ma10_gt_ma20(df, i):
+    return df.loc[i].ma5 > df.loc[i].ma10 > df.loc[i].ma20
+
+def check_binary_cmp(df, i, para1):
+    return df.loc[i][para1[0]] >= df.loc[i][para1[1]]
+
+def check_unary_cmp(df, num, para1):
+    for col in para1:
+        if df.loc[0][col] <= max(df[1:num][col]):
+            return False
+    return True
+
 def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
     if para2 == "verify-pchange":
         ret = check_abs_pchange_less(df, para1)
         result_list.append(tuple((name, code, para1[0], ret[0], ret[1])))
         return True
 
+    if para2 == "highest-in-n" and check_highest_in_n(df, 0, para1):
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0,0,0,0)))
+        return True
+
+    if para2 == "binary-cmp":
+        num = 0
+        for i in range(latest_n_days):
+            if check_binary_cmp(df, i, para1):
+                num = num + 1
+        if num > 0:
+            result_list.append(tuple((name, code, df.loc[i].date, df.loc[i + 1].date, latest_n_days, num, 0, 0, 0)))
+        return True
+
+    if para2 == "unary-cmp":
+        if check_unary_cmp(df, latest_n_days, para1):
+            result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, latest_n_days, 0, 0, 0)))
+        return True
+
+
     for i in range(latest_n_days):
-        if ((para2 == "close-ma20" and check_close_ma20(df, i, para1)) or
+        if para2 == "momentum" and i != 0 and check_momentum(df, i, para1):
+            result_list.append(tuple((name, code, df.loc[i].date, df.loc[i + 1].date, latest_n_days,
+                                      0, df.loc[i].p_change,
+                                      df.loc[i].volume * df.loc[i].close/100000000,
+                                      df.loc[i-1].p_change)))
+        elif ((para2 == "close-ma20" and check_close_ma20(df, i, para1)) or
             (para2 == "ma5-ma10" and check_ma5_ma10(df, i, para1)) or
             (para2 == "jump-open" and check_jump_open(df, i)) or
             (para2 == "volume-drop" and check_volume_drop(df, i)) or
-            (para2 == "abs-pchange-less" and check_abs_pchange_less(df, i))
+            (para2 == "abs-pchange-less" and check_abs_pchange_less(df, i)) or
+            (para2 == "ma5-gt-ma10-gt-m20" and check_ma5_gt_ma10_gt_ma20(df, i)) or
+            (para2 == "binary-cmp" and check_binary_cmp(df, i, para1))
         ):
-            result_list.append(tuple((name, code, df.loc[i].date, df.loc[i + 1].date, latest_n_days, 0)))
+            result_list.append(tuple((name, code, df.loc[i].date, df.loc[i + 1].date, latest_n_days, 0, 0, 0, 0)))
             return True
 
 

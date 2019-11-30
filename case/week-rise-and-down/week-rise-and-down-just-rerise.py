@@ -6,7 +6,7 @@ import pdb
 import stock_library2 as lib2
 
 def one_week_down_after_two_week_up():
-    for i in range(0, 1):
+    for i in range(0, 2):
         lib2.head_offset = i
         df1 = dr5.get_price_up_with_percentage(period_of_days=1, p_change=(-5, -3), period_type='week')
         lib2.head_offset = i + 1
@@ -37,5 +37,15 @@ def one_week_up_after_many_week_flat():
     df1 = dr5.get_maximum_price_sum_in_n(df1, period_of_days=3, p_change=(-5, 9), period_type='week')
 
 
+def two_week_up():
+    for i in range(2, 4):
+        lib2.head_offset = i
+        df1 = dr5.get_price_up_with_percentage(period_of_days=1, p_change=(5, 10), period_type='week')
+        lib2.head_offset = i + 1
+        df1 = dr5.get_price_up_with_percentage(df1, period_of_days=1, p_change=(10, 20), period_type='week')
+        df1.to_csv("two-week-" + str(i) + ".csv")
+
+
 #one_week_down_after_two_week_up()
-one_week_up_after_many_week_flat()
+#one_week_up_after_many_week_flat()
+two_week_up()

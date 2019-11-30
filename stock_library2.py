@@ -210,12 +210,12 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
 
         callback(stock_df.head(frame_size), stock_row.name, stock_code, latest_n_days, result_list, para1, para2)
 
-    result_df = pd.DataFrame(result_list, columns=['name', 'code', 'start_date', 'end_date', 'days', 'p_change'])
-    result_df.code = result_df.code.astype('str')
+    #result_df = pd.DataFrame(result_list, columns=['name', 'code', 'start_date', 'end_date', 'days', 'p_change'])
+    #result_df.code = result_df.code.astype('str')
 
     print(start_time)
     print(datetime.datetime.now().time())
-    return result_df
+    return result_list
 
 """
 if __name__ == '__main__':

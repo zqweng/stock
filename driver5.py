@@ -70,7 +70,7 @@ def get_price_continuous_down_in_n(df=None, price_down_sum=0, num_of_days_down=4
 
     return df_result
 
-def get_a_across_b(df=None, cross_above=True, cross_type="ma5-ma10", period_of_days=10, stock_list=None, period_type='day'):
+def get_a_across_b(df=None, cross_above=True, cross_type="ma5-ma10", period_of_days=10, stock_list=None, period_type='day', rank=False):
     if df is None and stock_list is None:
         stock_list_file = 'basic-no3.csv'
         # stock_list_file = 'mystocklist-detail.csv'
@@ -78,7 +78,7 @@ def get_a_across_b(df=None, cross_above=True, cross_type="ma5-ma10", period_of_d
     else:
         if stock_list is not None:
             df = myapi.read_csv(stock_list)
-    df_result = myapi.get_a_across_b(df, cross_above, cross_type, period_of_days, period_type)
+    df_result = myapi.get_a_across_b(df, cross_above, cross_type, period_of_days, period_type, rank)
 
     return df_result
 

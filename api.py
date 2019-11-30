@@ -267,19 +267,24 @@ def get_price_continuous_down_in_n(df, num_of_days_down, price_down_sum, num_of_
 """
    This function calculate history high from day trading table instead of month trading table
 """
-def get_a_across_b(df, cross_above, cross_type, num_of_days_periods, period_type):
+def get_a_across_b(df, cross_above, cross_type, num_of_days_periods, period_type, rank):
     result_string = ''
     tick_dir = getPath(period_type)
-    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_a_cross_b,
+    result_list = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_a_cross_b,
                                      cross_above,
                                      cross_type,
                                      60)
 
+    df_result = pd.DataFrame(result_list, columns=['name', 'code', 'start_date', 'end_date', 'days', 'p_change', 'p1', 'p2', 'p3'])
+    df_result.code = df_result.code.astype('str')
+
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     tmpfile = Path().joinpath('tmp', 'get_a_across_b-' + period_type + cross_type + "-" + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
-    #df_result = rank_stock(df_result)
-    #pdb.set_trace()
-    df_result.set_index('code', inplace=True)
+    if rank:
+        df_result = fill_columns(df, df_result)
+        df_result = rank_stock(df_result)
+    else:
+        df_result.set_index('code', inplace=True)
     df_result.to_csv(tmpfile)
     return df_result
 
