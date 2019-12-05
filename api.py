@@ -65,6 +65,26 @@ def rank_stock(df_result):
     print(datetime.datetime.now().time())
     return df_result
 
+def add_columns_and_rank_stock(df_result):
+    df = read_csv("basic-no3.csv")
+    if df.empty:
+        print('no stock list, quit')
+        quit()
+
+    print('start filling columns')
+
+    start_time = datetime.datetime.now().time()
+    df_result = df_result.reindex(columns=df_result.columns.tolist() + ['totals', 'pe'])
+
+    for i in df_result.index:
+        if df_result.loc[i].code in df.index:
+            df_result.loc[i, 'totals'] = df.loc[df_result.loc[i].code].totals
+            df_result.loc[i, 'pe'] = df.loc[df_result.loc[i].code].pe
+
+    print('end filing columns')
+    print(start_time)
+    print(datetime.datetime.now().time())
+    return rank_stock(df_result)
 
 def get_w_shape(df, num_of_periods, type='day'):
     result_string = ''
@@ -232,10 +252,13 @@ def get_miminum_price_sum_in_n(df, is_price_up, min_price_range, min_day_range, 
 def get_maximum_price_sum_in_n(df, percentage, num_of_days_periods, period_type):
     result_string = ''
     tick_dir = getPath(period_type)
-    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_maximum_price_sum_for_n_period,
+    result_list = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_maximum_price_sum_for_n_period,
                                      percentage,
                                      0,
                                      60)
+
+    df_result = pd.DataFrame(result_list, columns=['name', 'code', 'start_date', 'end_date', 'days', 'p_change'])
+    df_result.code = df_result.code.astype('str')
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     tmpfile = Path().joinpath('tmp', 'get_maximum_price_sum_in_n-' + period_type + '_' + str(num_of_days_periods) + '_days_' + str_time + '.csv')
@@ -279,12 +302,10 @@ def get_a_across_b(df, cross_above, cross_type, num_of_days_periods, period_type
     df_result.code = df_result.code.astype('str')
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    tmpfile = Path().joinpath('tmp', 'get_a_across_b-' + period_type + cross_type + "-" + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
+    tmpfile = Path().joinpath('tmp', 'get_a_across_b-' + str(mylib2.head_offset) + '_' + period_type + cross_type + '_' + str(num_of_days_periods) + '_days_' + "-" + str_time + '.csv')
     if rank:
-        df_result = fill_columns(df, df_result)
-        df_result = rank_stock(df_result)
-    else:
-        df_result.set_index('code', inplace=True)
+        df_result = add_columns_and_rank_stock(df_result)
+    df_result.set_index('code', inplace=True)
     df_result.to_csv(tmpfile)
     return df_result
 
@@ -307,10 +328,14 @@ def get_price_above(df, type, num_of_days_periods, period_type):
 def get_price_up_with_percentage(df, percentage, num_of_days_periods, period_type):
     result_string = ''
     tick_dir = getPath(period_type)
-    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_up_with_percentage,
+    result_list = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_price_up_with_percentage,
                                      percentage,
                                      0,
                                      60)
+
+    df_result = pd.DataFrame(result_list,
+                             columns=['name', 'code', 'start_date', 'end_date', 'days', 'p_change'])
+    df_result.code = df_result.code.astype('str')
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     tmpfile = Path().joinpath('tmp', 'get_price_up_with_percentage-' + period_type + '_' + str(num_of_days_periods) + '_days_' + str_time + '.csv')

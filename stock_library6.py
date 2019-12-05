@@ -125,11 +125,17 @@ def check_ma5_gt_ma10_gt_ma20(df, i):
 def check_binary_cmp(df, i, para1):
     return df.loc[i][para1[0]] >= df.loc[i][para1[1]]
 
+def check_binary_cmp_close(df, i, para1):
+    return abs((df.loc[i][para1[0]] - df.loc[i][para1[1]])/df.loc[i][para1[1]]) <= 0.025
+
 def check_unary_cmp(df, num, para1):
     for col in para1:
         if df.loc[0][col] <= max(df[1:num][col]):
             return False
     return True
+
+def check_unary_cmp_self(df, i, para1):
+    return df.loc[i][para1] > df.loc[i+1][para1]
 
 def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
     if para2 == "verify-pchange":
@@ -142,19 +148,30 @@ def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
         return True
 
     if para2 == "binary-cmp":
-        num = 0
         for i in range(latest_n_days):
-            if check_binary_cmp(df, i, para1):
-                num = num + 1
-        if num > 0:
-            result_list.append(tuple((name, code, df.loc[i].date, df.loc[i + 1].date, latest_n_days, num, 0, 0, 0)))
+            if not check_binary_cmp(df, i, para1):
+                return False
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, 0, 0, 0)))
+        return True
+
+    if para2 == "binary-cmp-close":
+        for i in range(latest_n_days):
+            if not check_binary_cmp_close(df, i, para1):
+                return False
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, 0, 0, 0)))
+        return True
+
+    if para2 == "unary-cmp-self":
+        for i in range(latest_n_days):
+            if not check_unary_cmp_self(df, i, para1):
+                return False
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, 0, 0, 0)))
         return True
 
     if para2 == "unary-cmp":
         if check_unary_cmp(df, latest_n_days, para1):
             result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, latest_n_days, 0, 0, 0)))
         return True
-
 
     for i in range(latest_n_days):
         if para2 == "momentum" and i != 0 and check_momentum(df, i, para1):

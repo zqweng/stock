@@ -180,9 +180,6 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
         print('index is ', stock_code, 'num of stock is ', stock_num)
         stock_num = stock_num + 1
 
-        if stock_code == '600161':
-            continue
-
         csv_file = stock_code + '.csv'
         if not os.path.exists(os.path.join(hist_dir, csv_file)):
             print('file', csv_file, 'does not exist, skip it')

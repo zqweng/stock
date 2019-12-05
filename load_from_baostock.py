@@ -145,11 +145,13 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
             continue
 
         df_from_network = create_df_from_bao_rs(rs)
-        df_from_network = df_from_network[df_from_network.turn != '']
+
 
         if df_from_network is None:
             print('discard idle data')
             continue
+
+        df_from_network = df_from_network[df_from_network.turn != '']
 
         if not df_stock_hist.empty:
             df_stock_hist.set_index('date', inplace=True)
@@ -190,8 +192,8 @@ def drop_zero_volume(df):
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
     #load_history(tick_dir, 'basic-no3.csv', 'm')
-    #load_history(tick_dir, 'basic-no3.csv', 'd')
+    load_history(tick_dir, 'basic-no3.csv', 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', drop_zero_volume, 'd')
-    load_history(tick_dir, 'basic-no3.csv', 'w')
+    #load_history(tick_dir, 'basic-no3.csv', 'w')
