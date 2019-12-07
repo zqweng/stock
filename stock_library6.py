@@ -135,7 +135,10 @@ def check_unary_cmp(df, num, para1):
     return True
 
 def check_unary_cmp_self(df, i, para1):
-    return df.loc[i][para1] > df.loc[i+1][para1]
+    if para1[1] == "greater":
+        return df.loc[i][para1[0]] > df.loc[i+1][para1[0]]
+    else:
+        return df.loc[i][para1[0]] < df.loc[i+1][para1[0]]
 
 def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
     if para2 == "verify-pchange":
@@ -166,6 +169,23 @@ def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
             if not check_unary_cmp_self(df, i, para1):
                 return False
         result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, 0, 0, 0)))
+        return True
+
+    if para2 == "unary-current-trend":
+        count = 1
+        if df.loc[0][para1] >= df.loc[1][para1]:
+            go_up = True
+        else:
+            go_up = False
+        for i in range(1, latest_n_days):
+            if (df.loc[i][para1] >= df.loc[i+1][para1]) == go_up:
+                count = count + 1
+            else:
+                break
+        if not go_up:
+            count = -count
+        print(code, ' count ', count)
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, count, 0, 0)))
         return True
 
     if para2 == "unary-cmp":

@@ -71,6 +71,9 @@ def ma(df):
 
 def boll(df):
     df = df.sort_index(ascending=True)
+    df = df.astype(
+        {'open': 'float64', 'high': 'float64', 'close': 'float64', 'low': 'float64', 'volume': 'int64'})
+
     inputs = {
         'open': df.open.values,
         'high': df.high.values,
