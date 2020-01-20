@@ -123,7 +123,11 @@ def check_ma5_gt_ma10_gt_ma20(df, i):
     return df.loc[i].ma5 > df.loc[i].ma10 > df.loc[i].ma20
 
 def check_binary_cmp(df, i, para1):
-    return df.loc[i][para1[0]] >= df.loc[i][para1[1]]
+    if len(para1) == 2:
+        return df.loc[i][para1[0]] >= df.loc[i][para1[1]]
+    else:
+        return (df.loc[i][para1[0]] >= df.loc[i][para1[1]] and
+                (df.loc[i][para1[1]] - df.loc[i+1][para1[1]])/df.loc[i][para1[1]] > para1[2])
 
 def check_binary_cmp_close(df, i, para1):
     return abs((df.loc[i][para1[0]] - df.loc[i][para1[1]])/df.loc[i][para1[1]]) <= 0.025
@@ -135,8 +139,10 @@ def check_unary_cmp(df, num, para1):
     return True
 
 def check_unary_cmp_self(df, i, para1):
+    pdb.set_trace()
     if para1[1] == "greater":
-        return df.loc[i][para1[0]] > df.loc[i+1][para1[0]]
+        diff = (df.loc[i][para1[0]] - df.loc[i+1][para1[0]]) / df.loc[i][para1[0]]
+        return diff >= para1[2]
     else:
         return df.loc[i][para1[0]] < df.loc[i+1][para1[0]]
 
@@ -173,12 +179,12 @@ def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
 
     if para2 == "unary-current-trend":
         count = 1
-        if df.loc[0][para1] >= df.loc[1][para1]:
+        if para1[0] == "up":
             go_up = True
         else:
             go_up = False
         for i in range(1, latest_n_days):
-            if (df.loc[i][para1] >= df.loc[i+1][para1]) == go_up:
+            if (df.loc[i][para1[1]] >= df.loc[i+1][para1[1]]) == go_up:
                 count = count + 1
             else:
                 break

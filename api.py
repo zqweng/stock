@@ -11,9 +11,12 @@ import platform
 
 from sklearn.preprocessing import MinMaxScaler
 import pdb
-
+market = "China"
 def get_data_dir():
-    return 'stockdata-bao'
+    if market == "China":
+        return 'stockdata-bao'
+    else:
+        return 'us-stock-data'
 
 def getPath(period_type):
     if platform.system() == "Windows":
@@ -183,11 +186,16 @@ def get_current_no_touch_ma5_periods(df):
     df_result.to_csv(tmpfile)
     return df_result
 
-def read_csv(stock_list_file):
-    if platform.system() == "Windows":
-        path = Path("C:/Users/johnny/PycharmProjects/stock-github")
-    df = pd.read_csv(path/stock_list_file, converters={'code': lambda x: str(x)})
-    df.set_index('code', inplace=True)
+def read_csv(stock_list_file, local=False):
+    if not local and platform.system() == "Windows":
+        file = Path("C:/Users/johnny/PycharmProjects/stock-github")/stock_list_file
+    else:
+        file = stock_list_file
+    df = pd.read_csv(file, converters={'code': lambda x: str(x)})
+    if market == "China":
+        df.set_index('code', inplace=True)
+    else:
+        df.set_index('code', inplace=True)
     df["ret"] = 0
     return df
 
@@ -234,11 +242,14 @@ def get_first_history_high_volume_in_n(df, num_of_days, num_of_days_periods=0):
 """
 def get_miminum_price_sum_in_n(df, is_price_up, min_price_range, min_day_range, num_of_days_periods, period_type):
     tick_dir = getPath(period_type)
-    df_result = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_minimum_price_sum_for_n_period,
+    result_list = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_minimum_price_sum_for_n_period,
                                      is_price_up,
                                      (min_price_range, min_day_range),
                                      60)
 
+    df_result = pd.DataFrame(result_list,
+                             columns=['name', 'code', 'start_date', 'end_date', 'days', 'p_change'])
+    df_result.code = df_result.code.astype('str')
     #df_result = fill_columns(df, df_result)
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     tmpfile = Path().joinpath('tmp', 'get_price_sum_in_n-' + period_type + str_time + '_' + str(num_of_days_periods) + '_days_' + '.csv')
@@ -296,7 +307,7 @@ def get_a_across_b(df, cross_above, cross_type, num_of_days_periods, period_type
     result_list = mylib2.hist_callback(df, tick_dir, num_of_days_periods, mylib6.find_a_cross_b,
                                      cross_above,
                                      cross_type,
-                                     60)
+                                     30)
 
     df_result = pd.DataFrame(result_list, columns=['name', 'code', 'start_date', 'end_date', 'days', 'p_change', 'p1', 'p2', 'p3'])
     df_result.code = df_result.code.astype('str')

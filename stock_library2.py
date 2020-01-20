@@ -157,6 +157,15 @@ def sum_of_latest_n_days_price_up(df, name,  code, latest_n_days, result_list, p
                               latest_n_days, df[0:latest_n_days]['p_change'].sum())))
     return
 
+def filter_stock(df_all, df_old, field_name, value):
+    df_new = pd.DataFrame()
+    for stock_row in df_old.itertuples():
+        stock_code = stock_row.Index
+        if df_all.loc[stock_code][field_name] < value:
+            df_new = df_new.append(df_old.loc[stock_row.Index])
+
+    return df_new
+
 
 
 def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_period=0):
@@ -194,6 +203,8 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
         if stock_df is None:
             print('failed to get history file ', stock_code)
             continue
+
+        stock_df.rename(columns={"Date": "date"}, inplace=True)
 
         if latest_n_days == 0:
             frame_size = len(stock_df.index)
