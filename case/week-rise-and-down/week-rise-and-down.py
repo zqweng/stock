@@ -1,8 +1,5 @@
-import update_history as uh1
-import case_get_hitory_high as hh
 import driver5 as dr5
-import api as myapi
-import pdb
+
 df1 = dr5.get_minimum_price_sum_in_n(price_up_sum=30, period_of_days=20, period_type='week')
 df1 = dr5.get_minimum_price_sum_in_n(df1, is_price_up=False, price_up_sum=-10, period_of_days=10, period_type='week')
 #df1 = myapi.read_csv("up-20-down-10-in-20days.csv")

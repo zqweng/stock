@@ -1,12 +1,9 @@
 """
 when you import
 """
-import os
 import pandas as pd
-import update_history
-import stock_library as mylib
+from utils import stock_library as mylib
 from pathlib import Path
-import pdb
 
 # pdb.set_trace()
 

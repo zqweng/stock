@@ -1,5 +1,3 @@
-import update_history as uh1
-import case_get_hitory_high as hh
 import stock_library2 as lib2
 import driver5 as dr5
 import api as myapi
@@ -63,13 +61,15 @@ def touch_base_ma20(df, market='usa'):
 """
    first time in recent 5 days that close price stand above upper band
    for binary-cmp, period_of_days specifies the period that the result of comparisons should all be true.
+   "0.02" means upper price must rise up above 2% than yesterday. since upper price is a average one so 2% rise should
+   be a huge change. 
 """
 def first_cross_above_upper(df, market='usa'):
     myapi.market = market
-    df = dr5.get_a_across_b(df, period_of_days=1, cross_above=("close", "upper"), cross_type="binary-cmp",
+    df = dr5.get_a_across_b(df, period_of_days=1, cross_above=("close", "upper", 0.02), cross_type="binary-cmp",
                             period_type='day')
     lib2.head_offset = 1
-    df1 = dr5.get_a_across_b(df, period_of_days=5, cross_above=("upper", "close"), cross_type="binary-cmp",
+    df = dr5.get_a_across_b(df, period_of_days=5, cross_above=("upper", "close"), cross_type="binary-cmp",
                              period_type='day')
     df.to_csv("{}.csv".format(inspect.stack()[0][3]))
     return df

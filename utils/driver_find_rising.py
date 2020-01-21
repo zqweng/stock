@@ -13,8 +13,7 @@
 from pathlib import Path
 import os
 import pandas as pd
-import stock_library as mylib
-import drawing_library as mydraw
+from utils import drawing_library as mydraw, stock_library as mylib
 import pdb
 
 start_date = '2019-01-1'

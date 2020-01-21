@@ -1,11 +1,6 @@
-import update_history as uh1
-import case_get_hitory_high as hh
 import stock_library2 as lib2
 import driver5 as dr5
-import api as myapi
 import pdb
-import pandas as pd
-import datetime
 
 
 # 3 weeks of flat periods after a big rise, then the last week it rise up

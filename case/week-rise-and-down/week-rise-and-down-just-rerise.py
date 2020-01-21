@@ -1,8 +1,4 @@
-import update_history as uh1
-import case_get_hitory_high as hh
 import driver5 as dr5
-import api as myapi
-import pdb
 import stock_library2 as lib2
 
 def one_week_down_after_two_week_up():

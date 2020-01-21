@@ -1,10 +1,5 @@
-import update_history as uh1
-import case_get_hitory_high as hh
 import stock_library2 as lib2
 import driver5 as dr5
-import api as myapi
-import pdb
-import pandas as pd
 import datetime
 
 def counting_break_upper_band_after_n(offset=0, num = 8, type='day',  df1=None):
