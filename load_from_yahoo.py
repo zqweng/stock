@@ -103,12 +103,14 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
     total_num = len(df.index)
     cur_num = 1
 
-    for stock_code in df['symbol']:
-        #pdb.set_trace()
+    for stock_code in df['code']:
+        print('code is ', stock_code)
         hist_file = os.path.join(hist_dir, stock_code + '.csv')
         if os.path.isfile(hist_file):
             df_stock_hist = pd.read_csv(hist_file)
-            date_string = (pd.to_datetime(df_stock_hist.loc[0].Date) + pd.to_timedelta('1 days')).strftime('%Y-%m-%d')
+            if 'Date' in df_stock_hist.columns:
+                df_stock_hist.rename(columns={'Date': 'date'}, inplace=True)
+            date_string = (pd.to_datetime(df_stock_hist.loc[0].date) + pd.to_timedelta('1 days')).strftime('%Y-%m-%d')
         else:
             df_stock_hist = pd.DataFrame()
             date_string = default_start_date
@@ -123,8 +125,8 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
             continue
 
         df_from_network = modify_df_from_yahoo(df_from_network)
-
         if not df_stock_hist.empty:
+            df_stock_hist.set_index('date', inplace=True)
             df_from_network = mylib3.ma_update(df_stock_hist.head(20).copy(), df_from_network)
             df_stock_joined = pd.concat([df_from_network, df_stock_hist])
             df_stock_joined.to_csv(hist_file)
