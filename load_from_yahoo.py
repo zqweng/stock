@@ -60,10 +60,10 @@ def find_sub_hist_dir(hist_dir, ktype_val):
         hist_dir = os.path.join(hist_dir, 'week')
     elif ktype_val == 'M' or ktype_val == 'm':
         hist_dir = os.path.join(hist_dir, 'month')
-    elif ktype_val == '60':
-        hist_dir = os.path.join(hist_dir, '60')
-    elif ktype_val == '15':
-        hist_dir = os.path.join(hist_dir, '15')
+    elif ktype_val == '60m':
+        hist_dir = os.path.join(hist_dir, '60m')
+    elif ktype_val == '15m':
+        hist_dir = os.path.join(hist_dir, '15m')
     if not os.path.exists(hist_dir):
         os.mkdir(hist_dir)
 
@@ -118,7 +118,10 @@ def load_history(hist_dir, stock_list_file, ktype_val='D'):
         print('index is ', stock_code, 'cur is ', cur_num, 'total ', total_num)
         cur_num = cur_num + 1
 
-        df_from_network = yf.download(stock_code, start=date_string)
+        if ktype_val == 'D' or ktype_val == 'd':
+            df_from_network = yf.download(stock_code, start=date_string)
+        else:
+            df_from_network = yf.download(stock_code, start=date_string, period='1mo', interval=ktype_val)
 
         if df_from_network.empty:
             print('no new data for', stock_code)
@@ -140,7 +143,7 @@ if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'us-stock-data')
     load_history(tick_dir, 'us_stock_volume.csv', 'd')
     #load_history_min(tick_dir, 'basic-no3.csv')
-    #load_history_min(tick_dir, 'basic-no3.csv', ktype_val='15')
+    #load_history(tick_dir, 'us_stock_volume.csv', ktype_val='60m')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', drop_zero_volume, 'd')

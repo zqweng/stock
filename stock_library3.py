@@ -83,6 +83,7 @@ def boll(df):
     }
 
     df['upper'], df['middle'], df['lower'] = BBANDS(inputs, 20, 2, 2)
+    df['width'] = df['upper'] - df['lower']
     df = df.round(3)
     return df.sort_index(ascending=False)
 

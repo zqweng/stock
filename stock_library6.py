@@ -123,28 +123,36 @@ def check_ma5_gt_ma10_gt_ma20(df, i):
     return df.loc[i].ma5 > df.loc[i].ma10 > df.loc[i].ma20
 
 def check_binary_cmp(df, i, para1):
+    """
+       3 parameters for boll upper band
+       4 parameters for ma20, para1[0] larger than para1[1], or less than no more than para1[2]
+    """
     if len(para1) == 2:
         return df.loc[i][para1[0]] >= df.loc[i][para1[1]]
-    else:
+    elif len(para1) == 3:
         return (df.loc[i][para1[0]] >= df.loc[i][para1[1]] and
                 (df.loc[i][para1[1]] - df.loc[i+1][para1[1]])/df.loc[i][para1[1]] > para1[2])
+    else:
+        return (df.loc[i][para1[0]] >= df.loc[i][para1[1]] or
+                ((df.loc[i][para1[1]] - df.loc[i][para1[0]]) / df.loc[i][para1[1]]) < para1[2])
+
+def check_binary_cmp_p(df, i, para1):
+    (df.loc[i][para1[0]] - df.loc[i][para1[1]])/df.loc[i][para1[0]] > para1[2]
 
 def check_binary_cmp_close(df, i, para1):
     return abs((df.loc[i][para1[0]] - df.loc[i][para1[1]])/df.loc[i][para1[1]]) <= 0.025
 
 def check_unary_cmp(df, num, para1):
-    for col in para1:
-        if df.loc[0][col] <= max(df[1:num][col]):
-            return False
+    if df.loc[0][para1] >= min(df[1:num][para1]):
+        return False
     return True
 
 def check_unary_cmp_self(df, i, para1):
-    pdb.set_trace()
     if para1[1] == "greater":
         diff = (df.loc[i][para1[0]] - df.loc[i+1][para1[0]]) / df.loc[i][para1[0]]
-        return diff >= para1[2]
+        return diff > para1[2]
     else:
-        return df.loc[i][para1[0]] < df.loc[i+1][para1[0]]
+        return df.loc[i][para1[0]] <= df.loc[i+1][para1[0]]
 
 def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
     if para2 == "verify-pchange":
@@ -171,6 +179,8 @@ def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
         return True
 
     if para2 == "unary-cmp-self":
+        if code == "INTC":
+            pdb.set_trace()
         for i in range(latest_n_days):
             if not check_unary_cmp_self(df, i, para1):
                 return False
@@ -192,6 +202,17 @@ def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
             count = -count
         print(code, ' count ', count)
         result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, count, 0, 0)))
+        return True
+
+    if para2 == "conv":
+        row = df.iloc[0]
+        p1 = row[para1[0]]
+        p2 = row[para1[1]]
+        p3 = row[para1[2]]
+        d1 = abs((p1 - p2) / p1)
+        d2 = abs((p2 - p3) / p2)
+        d3 = abs((p1 - p3) / p2)
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, d1 + d2 + d3, 0, 0)))
         return True
 
     if para2 == "unary-cmp":
