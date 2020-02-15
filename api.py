@@ -64,6 +64,29 @@ def rank_stock(df_result):
     print(datetime.datetime.now().time())
     return df_result
 
+def add_columns(df_result):
+    df = read_csv("basic-no3.csv")
+    if df.empty:
+        print('no stock list, quit')
+        quit()
+
+    print('start filling columns')
+
+    start_time = datetime.datetime.now().time()
+    df_result = df_result.reindex(columns=df_result.columns.tolist() + ['totals', 'pe'])
+
+    for i in df_result.index:
+        if df_result.loc[i].code in df.index:
+            df_result.loc[i, 'outstanding'] = df.loc[df_result.loc[i].code].outstanding
+            df_result.loc[i, 'totals'] = df.loc[df_result.loc[i].code].totals
+            df_result.loc[i, 'pe'] = df.loc[df_result.loc[i].code].pe
+
+    print('end filing columns')
+    print(start_time)
+    print(datetime.datetime.now().time())
+    return df_result
+
+
 def add_columns_and_rank_stock(df_result):
     df = read_csv("basic-no3.csv")
     if df.empty:
@@ -77,6 +100,7 @@ def add_columns_and_rank_stock(df_result):
 
     for i in df_result.index:
         if df_result.loc[i].code in df.index:
+            df_result.loc[i, 'outstanding'] = df.loc[df_result.loc[i].code].outstanding
             df_result.loc[i, 'totals'] = df.loc[df_result.loc[i].code].totals
             df_result.loc[i, 'pe'] = df.loc[df_result.loc[i].code].pe
 
@@ -310,8 +334,7 @@ def get_a_across_b(df, cross_above, cross_type, num_of_days_periods, period_type
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     tmpfile = Path().joinpath('tmp', 'get_a_across_b-' + str(mylib2.head_offset) + '_' + period_type + cross_type + '_' + str(num_of_days_periods) + '_days_' + "-" + str_time + '.csv')
-    if rank:
-        df_result = add_columns_and_rank_stock(df_result)
+    df_result = add_columns(df_result)
     df_result.set_index('code', inplace=True)
     df_result.to_csv(tmpfile)
     return df_result

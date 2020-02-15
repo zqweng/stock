@@ -208,7 +208,7 @@ def load_history_min(hist_dir, stock_list_file, ktype_val='60'):
     print('login respond error_code:' + lg.error_code)
     print('login respond  error_msg:' + lg.error_msg)
 
-    default_start_date = '2019-12-31'
+    default_start_date = '2020-02-11'
     if not os.path.isfile(stock_list_file):
         print('股票清单 not exist, create one')
         quit()
@@ -292,12 +292,12 @@ def drop_zero_volume(df):
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
-    load_history(tick_dir, 'basic-no3.csv', 'd')
+    #load_history(tick_dir, 'basic-no3.csv', 'd')
     #load_history_min(tick_dir, 'basic-no3.csv')
-    #load_history_min(tick_dir, 'basic-no3.csv', ktype_val='15')
+    load_history_min(tick_dir, 'basic-no3.csv', ktype_val='15')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', drop_zero_volume, 'd')
-    #load_history(tick_dir, 'basic-no3.csv', 'w')
+    load_history(tick_dir, 'basic-no3.csv', 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_ma_boll, '60')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_ma, '60')

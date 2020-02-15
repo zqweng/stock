@@ -3,13 +3,13 @@ import tushare as ts
 import pandas as pd
 import pdb
 
+"""
 df_stock = pd.read_csv('newlist.csv', converters={'code': lambda x: str(x)})
 
 state_list = [[0 for x in range(5)] for y in range(len(df_stock.index))]
-"""
+
 for i in range(len(df_stock.index)):
     state_list[i][0] = i
-"""
 #stat_df = pd.DataFrame(state_list, columns=["code", "name", "bid-vol", "ask-vol", "ratio-bid-ask"])
 stat_df = df_stock[["code", "name"]].copy()
 count = 0
@@ -19,7 +19,7 @@ stat_df['bidvol'] = 0
 stat_df['askvol'] = 0
 stat_df['ratio'] = 0.0
 stat_df['p_change'] = 0.0
-
+"""
 #from live data file get real time bid/ask data for each stock and create a dataframe for each stock and do the following
 # things:
 # from stock list dataframe, import columns: code, name,
@@ -32,11 +32,11 @@ def create_stats_df():
     df1['difvol'] = df1['volume'] - df1['volume'].shift(-1)
     df1['difprice'] = df1['price'] - df1['price'].shift(1)
 
-def get_realtime_quote():
+def get_realtime_quote(list):
     global new_df
     global count
     global last_fetch_time
-    df = ts.get_realtime_quotes(df_stock['code'])
+    df = ts.get_realtime_quotes(list)
 
     #if last_fetch_time == df.loc[0].time:
     #    return
@@ -82,5 +82,5 @@ def get_realtime_quote():
 
 
 while True:
-    get_realtime_quote()
+    get_realtime_quote(["000002", "600001"])
     time.sleep(10)
