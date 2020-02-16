@@ -1,6 +1,7 @@
 import time
 import tushare as ts
 import pandas as pd
+import api as myapi
 import pdb
 
 """
@@ -42,9 +43,14 @@ def get_realtime_quote(list):
     #    return
     last_fetch_time = df.loc[0].time
     df.replace(to_replace='', inplace=True, value='0')
+    df = df[["name", "open", "pre_close", "price", "time", "code"]]
+    df.pre_close = df.pre_close.astype("float32")
+    df.price = df.price.astype("float32")
+
+    df["p_change"] = round((df["price"]-df["pre_close"]) * 100 /df["pre_close"], 3)
 
     print(df)
-
+"""
     b1_v = df.b1_v.astype("int32")
     b2_v = df.b2_v.astype("int32")
     b3_v = df.b3_v.astype("int32")
@@ -55,9 +61,10 @@ def get_realtime_quote(list):
     a3_v = df.a3_v.astype("int32")
     a4_v = df.a4_v.astype("int32")
     a5_v = df.a5_v.astype("int32")
-    col_preclose = df.pre_close.astype("float32")
-    col_price = df.price.astype("float32")
+"""
 
+
+"""
     for i in range(len(df.index)):
         stat_df.at[i, 'bidvol'] = b1_v[i] + b2_v[i] + b3_v[i] + b4_v[i] + b5_v[i]
         stat_df.at[i, 'askvol'] = a1_v[i] + a2_v[i] + a3_v[i] + a4_v[i] + a5_v[i]
@@ -65,6 +72,7 @@ def get_realtime_quote(list):
         stat_df.at[i, "p_change"] = 100 * (col_price[i] - col_preclose[i])/col_preclose[i]
 
     print(stat_df.sort_values(by=['ratio'], ascending=False))
+
     a = df.loc[df['name'] == '思源电气']
     b = df.loc[0]
     print(type(b))
@@ -79,8 +87,16 @@ def get_realtime_quote(list):
         print('write a new file')
         # new_df.to_csv('realtime' + str(count/30) + '.csv')
         new_df = pd.DataFrame()
+"""
 
-
+df = myapi.read_csv(r"result\final.csv")
+li = df.index.to_list()
+ex_li = ["002328", "002258", "603839", "002002", "603920", "002688", "002373", "002237", "002829", "600267", "002756",
+         "002803", "603583"]
 while True:
-    get_realtime_quote(["000002", "600001"])
-    time.sleep(10)
+    print("latest list from ma20\n\n")
+    get_realtime_quote(li)
+    time.sleep(15)
+    print("my custom list\n\n")
+    get_realtime_quote(ex_li)
+    time.sleep(15)

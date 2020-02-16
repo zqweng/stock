@@ -216,6 +216,15 @@ def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
                                   round((d1 + d2 + d3), 3), 0, 0)))
         return True
 
+    if para2 == "vol-pct":
+        df1 = df[0:latest_n_days].copy()
+        df1["p_change"] = round((df1["close"]-df1["open"])/df1["open"], 3)
+        df_up = df1[df1["p_change"] > 0]
+        v1 = df_up["volume"].sum()
+        pct = round(v1/df["volume"].sum(), 3)
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0,
+                                  0, pct, 0)))
+
     if para2 == "unary-cmp":
         if check_unary_cmp(df, latest_n_days, para1):
             result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, latest_n_days, 0, 0, 0)))
