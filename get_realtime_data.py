@@ -89,14 +89,15 @@ def get_realtime_quote(list):
         new_df = pd.DataFrame()
 """
 
-df = myapi.read_csv(r"result\final.csv")
-li = df.index.to_list()
-ex_li = ["002328", "002258", "603839", "002002", "603920", "002688", "002373", "002237", "002829", "600267", "002756",
-         "002803", "603583"]
-while True:
-    print("latest list from ma20\n\n")
-    get_realtime_quote(li)
-    time.sleep(15)
-    print("my custom list\n\n")
-    get_realtime_quote(ex_li)
-    time.sleep(15)
+if __name__ == "__main__":
+    df = myapi.read_csv(r"result\final-02-14.csv")
+    li = df.index.to_list()
+    ex_li = ["002328", "002258", "603839", "002002", "603920", "002688", "002373", "002237", "002829", "600267", "002756",
+             "002803", "603583"]
+    while True:
+        print("latest list from ma20\n\n")
+        get_realtime_quote(li)
+        time.sleep(15)
+        print("my custom list\n\n")
+        get_realtime_quote(ex_li)
+        time.sleep(15)

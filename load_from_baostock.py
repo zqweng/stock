@@ -292,7 +292,7 @@ def drop_zero_volume(df):
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
-    #load_history(tick_dir, 'basic-no3.csv', 'd')
+    load_history(tick_dir, 'basic-no3.csv', 'd')
     #load_history_min(tick_dir, 'basic-no3.csv')
     load_history_min(tick_dir, 'basic-no3.csv', ktype_val='15')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
