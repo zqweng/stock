@@ -216,7 +216,7 @@ def hist_callback(df, hist_dir, latest_n_days, callback, para1, para2, min_perio
             stock_df = stock_df[head_offset:]
             stock_df.reset_index(drop=True, inplace=True)
 
-        callback(stock_df.head(frame_size), stock_row.name, stock_code, latest_n_days, result_list, para1, para2)
+        callback(stock_df.head(frame_size), stock_row, stock_code, latest_n_days, result_list, para1, para2)
 
     #result_df = pd.DataFrame(result_list, columns=['name', 'code', 'start_date', 'end_date', 'days', 'p_change'])
     #result_df.code = result_df.code.astype('str')

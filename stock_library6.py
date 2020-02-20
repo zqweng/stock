@@ -154,7 +154,8 @@ def check_unary_cmp_self(df, i, para1):
     else:
         return df.loc[i][para1[0]] <= df.loc[i+1][para1[0]]
 
-def find_a_cross_b(df, name, code, latest_n_days, result_list, para1, para2):
+def find_a_cross_b(df, row, code, latest_n_days, result_list, para1, para2):
+    name = row.name
     if para2 == "verify-pchange":
         ret = check_abs_pchange_less(df, para1)
         result_list.append(tuple((name, code, para1[0], ret[0], ret[1])))

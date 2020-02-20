@@ -10,13 +10,13 @@ df = dr5.get_a_across_b(df, period_of_days=1, cross_above=("ma5", "ma10", "ma20"
 df1 = dr5.get_a_across_b(df, period_of_days=16, cross_type="vol-pct", period_type="15")
 df["p2"] = df1["p2"]
 df.sort_values(by="p2", inplace=True)
-df.to_csv(r"result/ma20-{}.csv".format(datetime.today().strftime('%Y-%m-%d')))
-#df.to_csv(r"result/ma20-2020-02-17.csv")
+df.to_csv(r"result/{}.csv".format(datetime.today().strftime('%Y-%m-%d')))
+#df.to_csv(r"result/2020-02-17.csv")
 
 df = df[df["p2"] < 0.8]
 df = df[df["p2"] >= 0.6]
 df = df[df["p_change"] >=6]
-df.to_csv(r"result/ma20-{}-6p.csv".format(datetime.today().strftime('%Y-%m-%d')))
+df.to_csv(r"result/{}-6p.csv".format(datetime.today().strftime('%Y-%m-%d')))
 """
 df_final = dr5.get_a_across_b(df, period_of_days=1, cross_above=("ma5", "ma20"), cross_type="binary-cmp")
 df_final = dr5.get_a_across_b(df_final, period_of_days=1, cross_above=("ma10", "ma20"), cross_type="binary-cmp")
