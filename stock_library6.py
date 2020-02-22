@@ -225,6 +225,26 @@ def find_a_cross_b(df, row, code, latest_n_days, result_list, para1, para2):
         pct = round(v1/df["volume"].sum(), 3)
         result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0,
                                   0, pct, 0)))
+        return True
+
+    if para2 == "vol-pct-count":
+        df1 = df[0:latest_n_days].copy()
+        df1["p_change"] = round((df1["close"] - df1["open"]) / df1["open"], 3)
+        df_up = df1[(df1["p_change"] >= 0.01) & (df1["p_change"] <= 0.04)]
+        if not df_up.empty:
+            count = len(df_up.index)
+        else:
+            count = 0
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0,
+                                  0, 0, count)))
+        return True
+
+    if para2 == "boll-band":
+        band = (df.loc[0].upper - df.loc[0].lower)/df.loc[0].lower
+        band = round(band, 3)
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0,
+                                  band, 0, 0)))
+        return True
 
     if para2 == "unary-cmp":
         if check_unary_cmp(df, latest_n_days, para1):

@@ -91,7 +91,6 @@ def first_cross_above_upper(df1=None, market='usa', period='day', offset=0, sile
     lib2.head_offset = 1 + offset
     df = dr5.get_a_across_b(df, period_of_days=silence, cross_above=("upper", "close"), cross_type="binary-cmp",
                             period_type=period)
-    lib2.head_offset = 0
 
     df.to_csv("{}_pe_{}_offset_{}.csv".format(inspect.stack()[0][3], period, offset))
     return df
@@ -157,18 +156,6 @@ common = df1.index.intersection(df.index)
 df1 = df1.loc[common]
 pdb.set_trace()
 """
-"""
-df = first_cross_above_upper(rise=0.01, silence=4, market="China")
-df1 = dr5.get_a_across_b(df, cross_type="boll-band")
-df["p1"] = df1["p1"]
-df.sort_values(by="p1", inplace=True)
-pdb.set_trace()
-"""
 
+#df1 = first_cross_above_upper(rise=0.01, silence=4, market="China")
 
-
-df = dr5.get_a_across_b(period_of_days=100, cross_above=("up", "ma20"), cross_type="unary-current-trend",
-                       period_type='day')
-df = df.sort_values("p1", ascending=False)
-pdb.set_trace()
-df.to_csv("{}-ma20-up-list2.csv".format(market))

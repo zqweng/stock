@@ -14,6 +14,8 @@ df.to_csv(r"result\ma20-2020-02-18-6p.csv")
 
 """
 
+df1 = dr5.get_a_across_b(period_of_days=16, cross_type="vol-pct-count", period_type="15")
+pdb.set_trace()
 def print_15min_vol_num(stock_list):
     for code in stock_list:
         df = pd.read_csv("C:\\Users\\johnny\\stockdata-bao\\15\\{}.csv".format(code), nrows=16)
@@ -23,4 +25,4 @@ def print_15min_vol_num(stock_list):
         print("code {} num above %1 is {}, less than%-1 is {} ".format(code, len(df1.index), len(df2.index)))
         pdb.set_trace()
 
-print_15min_vol_num(["600661"])
+#print_15min_vol_num(["600661"])
