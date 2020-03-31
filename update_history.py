@@ -22,6 +22,7 @@ from pathlib import Path
 import tushare as ts
 import stock_library3 as mylib3
 import os
+import datetime
 
 
 # hist_dir = '/home/johnny/python/csv/'

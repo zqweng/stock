@@ -172,6 +172,14 @@ def find_a_cross_b(df, row, code, latest_n_days, result_list, para1, para2):
         result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, df.iloc[0].p_change, 0, 0, 0)))
         return True
 
+    if para2 == "binary-cmp-pct":
+        v1 = df.loc[0][para1[0]]
+        v2 = df.loc[0][para1[1]]
+        pct = ((v1 - v2) / v1)
+        print("code {} v1 {} v2 {}".format(code, v1, v2))
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, pct, 0, 0)))
+        return True
+
     if para2 == "binary-cmp-close":
         for i in range(latest_n_days):
             if not check_binary_cmp_close(df, i, para1):
@@ -225,6 +233,7 @@ def find_a_cross_b(df, row, code, latest_n_days, result_list, para1, para2):
         pct = round(v1/df["volume"].sum(), 3)
         result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0,
                                   0, pct, 0)))
+
         return True
 
     if para2 == "vol-pct-count":
@@ -279,8 +288,8 @@ def find_price_above(df, name, code, latest_n_days, result_list, para1, para2):
             return True
 
 
-def find_price_up_with_percentage(df, name, code, latest_n_days, result_list, para1, para2):
+def find_price_up_with_percentage(df, row, code, latest_n_days, result_list, para1, para2):
     for i in range(latest_n_days):
         if para1[1] >= df.loc[i].p_change >= para1[0]:
-            result_list.append(tuple((name, code, df.loc[i].date, 0, latest_n_days, 0)))
+            result_list.append(tuple((row.name, code, df.loc[i].date, 0, latest_n_days, 0)))
             return True

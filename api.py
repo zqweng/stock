@@ -216,7 +216,6 @@ def read_csv(stock_list_file, local=False):
         df.set_index('code', inplace=True)
     else:
         df.set_index('code', inplace=True)
-    df["ret"] = 0
     return df
 
 

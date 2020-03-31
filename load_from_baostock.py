@@ -5,11 +5,20 @@ import baostock as bs
 import stock_library3 as mylib3
 import os
 import pdb
-
-
+#df_new = df[["name", "industry","pe", "area", "outstanding", "totals"]].copy()
+# df_result = df_result.reindex(columns=df_result.columns.tolist() + ['totals', 'pe'])
+#df1["code"] = df1["code"].str.strip("szh.")
 # hist_dir = '/home/johnny/python/csv/'
 # stock_list_file = 'mystocklist-detail.csv'
-
+#df1 = df1.drop(columns="Unnamed: 0")
+#df_updated = df_new.loc[df_new.index.isin(df['code'])]
+#df1 = df1.loc[df1.index.isin(df.index)]
+#df_result.loc[i, 'totals'] = df.loc[df_result.loc[i].code].totals
+#  df1.loc[row.Index, 'name'] = df.loc[row.Index].name
+#  以上错误，因为df.loc[row.Index]是一个series,这个series是dataframe的一行
+#  这个series里面的每个域就是对应column的值，如果里面column有个名字叫name,那就跟这个series的name冲突。
+#  这个series的name就是它的index,在这里就是code, 所以如果想得到name的值，就只能用物理位置，like, df.loc[][0]
+# date_string = (pd.to_datetime(df_stock_hist.loc[0].date) + pd.to_timedelta('1 days')).strftime('%Y-%m-%d')
 
 def update_history_with_callback(hist_dir, stock_list_file, callback, ktype_val='W'):
     if not os.path.isfile(stock_list_file):
@@ -292,8 +301,8 @@ def drop_zero_volume(df):
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
-    #load_history(tick_dir, 'basic-no3.csv', 'd')
-    #load_history_min(tick_dir, 'basic-no3.csv')
+    load_history(tick_dir, 'basic-no3.csv', 'd')
+    load_history_min(tick_dir, 'basic-no3.csv')
     #load_history_min(tick_dir, 'basic-no3.csv', ktype_val='15')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')

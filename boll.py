@@ -1,6 +1,7 @@
 import stock_library2 as lib2
 import driver5 as dr5
 import api as myapi
+import plot
 import pdb
 import inspect
 
@@ -93,6 +94,7 @@ def first_cross_above_upper(df1=None, market='usa', period='day', offset=0, sile
                             period_type=period)
 
     df.to_csv("{}_pe_{}_offset_{}.csv".format(inspect.stack()[0][3], period, offset))
+
     return df
 
 def width_less(df, market='usa', period='day', offset=0):
@@ -155,7 +157,13 @@ df1 = myapi.read_csv(r"case\case-main-rise\ma20-6p-1.csv")
 common = df1.index.intersection(df.index)
 df1 = df1.loc[common]
 pdb.set_trace()
+
+
+df1 = first_cross_above_upper(rise=0.01, silence=4, market="China")
+df1.to_csv("upper.csv")
+
+df = dr5.get_a_across_b(period_of_days=1, cross_above=("close", "ma20"), cross_type="binary-cmp",
+                        period_type='day')
+
+pdb.set_trace()
 """
-
-#df1 = first_cross_above_upper(rise=0.01, silence=4, market="China")
-
