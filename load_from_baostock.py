@@ -1,4 +1,4 @@
-
+import platform
 import pandas as pd
 from pathlib import Path
 import baostock as bs
@@ -300,13 +300,18 @@ def drop_zero_volume(df):
     return df
 
 if __name__ == "__main__":
-    tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
-    load_history(tick_dir, 'basic-no3.csv', 'd')
-    load_history_min(tick_dir, 'basic-no3.csv')
+    if platform.system() == "windows":
+        tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
+    else:
+        tick_dir = r'/home/johnny/stockdata-bao'
+        ticker_list = r'/home/johnny/code/stock/basic-no3.csv'
+    
+    load_history(tick_dir, ticker_list, 'd')
+    load_history_min(tick_dir, ticker_list)
     #load_history_min(tick_dir, 'basic-no3.csv', ktype_val='15')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', drop_zero_volume, 'd')
-    load_history(tick_dir, 'basic-no3.csv', 'w')
+    #load_history(tick_dir, 'basic-no3.csv', 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_ma_boll, '60')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_ma, '60')
