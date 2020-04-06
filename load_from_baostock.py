@@ -245,11 +245,11 @@ def load_history_min(hist_dir, stock_list_file, ktype_val='60'):
 
         print('index is ', stock_code, 'cur is ', cur_num, 'total ', total_num)
         cur_num = cur_num + 1
-
         rs = bs.query_history_k_data_plus(add_stock_code_prefix(stock_code),
                                           "date,time,code,open,high,low,close,volume",
                                           start_date=date_string,
                                           frequency=ktype_val, adjustflag="2")
+        pdb.set_trace()
         if len(rs.data) == 0:
             print('no new data for', stock_code)
             continue
@@ -308,7 +308,7 @@ if __name__ == "__main__":
     
     load_history(tick_dir, ticker_list, 'd')
     load_history_min(tick_dir, ticker_list)
-    #load_history_min(tick_dir, 'basic-no3.csv', ktype_val='15')
+    #load_history_min(tick_dir, 'basic-no3.csv', ktype_val='5')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', drop_zero_volume, 'd')

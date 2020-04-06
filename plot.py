@@ -106,7 +106,7 @@ def send_email():
 
     send_email_smtp(msgRoot)
 
-def get_plot_figure_buf(df, info):
+def get_plot_figure_buf(df, subtitle):
     mpl.use('TkAgg')
     #plt.rcParams['font.sans-serif'] = ['Source Han Sans TW', 'sans-serif']
     plt.rcParams['font.sans-serif'] = ['SimHei']
@@ -136,7 +136,7 @@ def get_plot_figure_buf(df, info):
     #ax_price.autoscale_view()
     #plt.setp(plt.gca().get_xticklabels(), rotation=45, horizontalalignment='right')
     #pdb.set_trace()
-    fig.suptitle('{} {} {} 流通{}亿股'.format(info.industry, info[0], info.code, info.outstanding), fontsize=16)
+    fig.suptitle(subtitle, fontsize=16)
     #plt.show()
     buf = io.BytesIO()
     fig.savefig(buf, format = 'png')
@@ -219,7 +219,8 @@ def start_plot_save_in_email(msgRoot, msgAlternative, period_type, stock_list, p
                 print("{} is not an valid code".format(code))
                 continue
             df_info = df_list.loc[code]
-            buf = get_plot_figure_buf(df, df_info)
+            suptitle = '{} {} {} 流通{}亿股'.format(df_info.industry, df_info[0], df_info.code, df_info.outstanding)
+            buf = get_plot_figure_buf(df, suptitle)
 
             # We reference the image in the IMG SRC attribute by the ID we give it below
             msgText = MIMEText(

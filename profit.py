@@ -117,10 +117,10 @@ def import_col(df_profit, df_info):
 
 
 def get_profit_forecast(start_date="2020-03-01", end_date="2020-12-31"):
-    df_all = None
+    df_all = pd.DataFrame()
 
     df_orig = read_csv(r"/home/johnny/code/stock/basic-no3.csv")
-
+    df_orig = df_orig[0:1000]
     #### 登陆系统 ####
     lg = bs.login()
     # 显示登陆返回信息
@@ -154,6 +154,10 @@ def get_profit_forecast(start_date="2020-03-01", end_date="2020-12-31"):
         else:
             df_all = pd.concat([df_all, df])
 
+    if df_all.empty:
+        print("no forecast retrieved ")
+        return df_all
+
     df1 = import_col(df_all, df_orig)
     df1 = df1[df1["profitForcastType"]=="预增"]
     df1 = df1.sort_values(by = "profitForcastExpPubDate")
@@ -168,8 +172,9 @@ if __name__ == "__main__":
     os.chdir(path)
 
     df1 = get_profit_forecast()
-    
+
     #email(df1, "profit")
     #df1 = read_csv("profit.csv")
-    
-    send_email(topic="profit-forecast", content=df1.to_html())
+
+    if not df1.empty:
+        send_email(topic="profit-forecast", content=df1.to_html())
