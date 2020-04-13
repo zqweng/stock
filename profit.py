@@ -167,6 +167,13 @@ def get_profit_forecast(start_date="2020-03-01", end_date="2020-12-31"):
     bs.logout()
     return df1
 
+def send_profit_forecast():
+    df1 = get_profit_forecast()
+
+    if not df1.empty:
+        send_email(topic="profit-forecast", content=df1.to_html())
+
+
 if __name__ == "__main__":
     path = "/home/johnny/code/stock"
     os.chdir(path)

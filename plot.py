@@ -240,6 +240,26 @@ def get_code_list(list_file):
     df = myapi.read_csv(list_file)
     return df.index.to_list()
 
+def plot_stock(stock_list, subject=""):
+    prefix="bull"
+    msgRoot, msgAlternative = get_email_mime(subject=subject)
+    msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, subject,  stock_list, subject + "_")
+    send_email_smtp(msgRoot)
+
+
+
+def plot_stock_list(stock_list):
+    prefix="bull"
+    msgRoot, msgAlternative = get_email_mime(subject="60 minutes K")
+    msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "60", stock_list, "my_60_")
+    send_email_smtp(msgRoot)
+
+    msgRoot, msgAlternative = get_email_mime(subject="Day K")
+    msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "day", stock_list, "my_day_")
+    send_email_smtp(msgRoot)
+
+
+
 if __name__ == "__main__":
     prefix="bull"
     my_current_list = ["000818", "002603", "002286", "000911", "000823", "002852", "603360","603859","601872"]

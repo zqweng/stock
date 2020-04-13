@@ -249,7 +249,6 @@ def load_history_min(hist_dir, stock_list_file, ktype_val='60'):
                                           "date,time,code,open,high,low,close,volume",
                                           start_date=date_string,
                                           frequency=ktype_val, adjustflag="2")
-        pdb.set_trace()
         if len(rs.data) == 0:
             print('no new data for', stock_code)
             continue
@@ -299,15 +298,26 @@ def drop_zero_volume(df):
     df = df.loc[df['volume'] != 0]
     return df
 
-if __name__ == "__main__":
+def update_stock_data():
     if platform.system() == "windows":
         tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
     else:
         tick_dir = r'/home/johnny/stockdata-bao'
         ticker_list = r'/home/johnny/code/stock/basic-no3.csv'
-    
+
     load_history(tick_dir, ticker_list, 'd')
     load_history_min(tick_dir, ticker_list)
+
+if __name__ == "__main__":
+    
+    if platform.system() == "windows":
+        tick_dir = Path().joinpath('..', '..', 'stockdata-bao')
+    else:
+        tick_dir = r'/home/johnny/stockdata-bao'
+        ticker_list = r'/home/johnny/code/stock/basic-no3.csv'
+
+    load_history(tick_dir, ticker_list, 'd')
+    #load_history_min(tick_dir, ticker_list)
     #load_history_min(tick_dir, 'basic-no3.csv', ktype_val='5')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')

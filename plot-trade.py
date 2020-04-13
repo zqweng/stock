@@ -186,15 +186,16 @@ def plot_and_email_trade(df_trade):
         # get_plot_figure_buf(df_result, subtitile)
 
 
+def plot_trade_and_save():
+    df = pd.read_excel("2020-trade.xlsx", converters={'成交日期': lambda x: str(x), "证券代码": lambda x: str(x)})
+    df_buy = df[df["买卖标志"] == "买入"]
 
-df = pd.read_excel("2020-trade.xlsx", converters={'成交日期': lambda x: str(x), "证券代码": lambda x: str(x)})
-df_buy = df[df["买卖标志"] == "买入"]
-pdb.set_trace()
+    lg = bs.login()
+    print('login respond error_code:' + lg.error_code)
+    print('login respond  error_msg:' + lg.error_msg)
+    plot_and_email_trade(df_buy)
 
-lg = bs.login()
-print('login respond error_code:' + lg.error_code)
-print('login respond  error_msg:' + lg.error_msg)
-plot_and_email_trade(df_buy)
+
 
 
 
