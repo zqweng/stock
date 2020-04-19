@@ -1,5 +1,6 @@
 
 import matplotlib as mpl
+mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.dates import MONDAY, DateFormatter, DayLocator, WeekdayLocator
@@ -107,7 +108,7 @@ def send_email():
     send_email_smtp(msgRoot)
 
 def get_plot_figure_buf(df, subtitle):
-    mpl.use('TkAgg')
+    #mpl.use('TkAgg')
     #plt.rcParams['font.sans-serif'] = ['Source Han Sans TW', 'sans-serif']
     plt.rcParams['font.sans-serif'] = ['SimHei']
     #plt.rcParams["figure.figsize"] = [9.6, 7.2]
@@ -150,8 +151,6 @@ def plot(df, period, info, prefix=""):
     mpl.use('TkAgg')
     #plt.rcParams['font.sans-serif'] = ['Source Han Sans TW', 'sans-serif']
     plt.rcParams['font.sans-serif'] = ['SimHei']
-    #plt.rcParams["figure.figsize"] = [9.6, 7.2]
-    #fig=plt.figure(figsize=(20,10))
     fig = plt.figure()
 
     ax_price = plt.subplot2grid((10, 10), (0, 0), colspan=10, rowspan=8)
@@ -203,24 +202,26 @@ def start_plot(period_type, stock_list, prefix=""):
 
 def start_plot_save_in_email(msgRoot, msgAlternative, period_type, stock_list, prefix=""):
     df_list = read_csv("basic-no3.csv")
-    df_list["code"] = df_list.index
     count = 0
     for code in stock_list:
             count = count + 1
-            if platform.system() == "Windows":
-                file_name =  "C:\\Users\\johnny\\stockdata-bao\\{}\\{}.csv".format(period_type, code)
-            else:
-                file_name = "/home/johnny/stockdata-bao/{}/{}.csv".format(period_type, code)
-            df = pd.read_csv(file_name, nrows=100)
-            df = df.iloc[::-1]
-            df = df.reset_index()
 
             if code not in df_list.index:
                 print("{} is not an valid code".format(code))
                 continue
-            df_info = df_list.loc[code]
-            suptitle = '{} {} {} 流通{}亿股'.format(df_info.industry, df_info[0], df_info.code, df_info.outstanding)
-            buf = get_plot_figure_buf(df, suptitle)
+
+            if platform.system() == "Windows":
+                file_name = "C:\\Users\\johnny\\stockdata-bao\\{}\\{}.csv".format(period_type, code)
+            else:
+                file_name = "/home/johnny/stockdata-bao/{}/{}.csv".format(period_type, code)
+
+            df = pd.read_csv(file_name, nrows=100)
+            df = df.iloc[::-1]
+            df = df.reset_index()
+
+            code_info = df_list.loc[code]
+            subtitle = '{} {} {} 流通{}亿股'.format(code_info.industry, code_info[0], code, code_info.outstanding)
+            buf = get_plot_figure_buf(df, subtitle)
 
             # We reference the image in the IMG SRC attribute by the ID we give it below
             msgText = MIMEText(
