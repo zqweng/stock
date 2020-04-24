@@ -305,6 +305,8 @@ def update_stock_data():
         tick_dir = r'/home/johnny/stockdata-bao'
         ticker_list = r'/home/johnny/code/stock/basic-no3.csv'
 
+    load_history_min(tick_dir, ticker_list, ktype_val="15")
+    #load_history(tick_dir, ticker_list, 'w')
     load_history(tick_dir, ticker_list, 'd')
     load_history_min(tick_dir, ticker_list)
 
@@ -316,8 +318,10 @@ if __name__ == "__main__":
         tick_dir = r'/home/johnny/stockdata-bao'
         ticker_list = r'/home/johnny/code/stock/basic-no3.csv'
 
-    load_history(tick_dir, ticker_list, 'd')
-    load_history_min(tick_dir, ticker_list)
+    ticker_list = r'/home/johnny/PycharmProjects/stock/stock2monitor-update.csv'
+    #load_history(tick_dir,ticker_list, 'w')
+    #load_history(tick_dir, ticker_list, 'd')
+    load_history_min(tick_dir, ticker_list, ktype_val="15")
     #load_history_min(tick_dir, 'basic-no3.csv', ktype_val='5')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', reset_columns, 'd')

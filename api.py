@@ -17,6 +17,8 @@ def get_data_dir():
 def getPath(period_type):
     if platform.system() == "Windows":
         path = Path("C:/Users/johnny/")
+    else:
+        path = Path("/home/johnny/")
     return path/get_data_dir()/period_type
 
 def get_latest_sum_of_week_price_up(stock_list_file, num_of_weeks):
