@@ -37,7 +37,7 @@ df["time"] = pd.to_datetime(df1["p2"], format='%Y%m%d%H%M%S%f')
 df2 = df[df.time.dt.hour != 9]
 df2 = df2.sort_values(by="time")
 df2.to_csv("stock2monitor-volume-2.csv")
-pdb.set_trace()
+#pdb.set_trace()
 #df.volume = df.volume.astype(int)
 df.to_csv("stock2monitor-volume.csv")
 

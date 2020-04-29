@@ -149,36 +149,28 @@ def get_plot_figure_buf(df, subtitle):
 
 def plot(df, period, info, prefix=""):
     mpl.use('TkAgg')
-    #plt.rcParams['font.sans-serif'] = ['Source Han Sans TW', 'sans-serif']
+
     plt.rcParams['font.sans-serif'] = ['SimHei']
+
     fig = plt.figure()
 
+    #pdb.set_trace()
     ax_price = plt.subplot2grid((10, 10), (0, 0), colspan=10, rowspan=8)
     ax_vol = plt.subplot2grid((10, 10), (8, 0), colspan=10)
+    #ax_price = fig.subplots()
 
     fig.subplots_adjust(bottom=0.2)
     fig.set_size_inches(10, 8)
-    #ax_price.xaxis.set_major_locator(mondays)
-    #ax_price.xaxis.set_minor_locator(alldays)
-    #ax_price.xaxis.set_major_formatter(weekFormatter)
-    #ax_price.xaxis.set_minor_formatter(dayFormatter)
-    # plot_day_summary(ax_price, quotes, ticksize=3)
     candlestick2_ohlc(ax_price, df['open'], df['high'], df['low'], df['close'], width=0.6)
     ax_price.plot(df["ma5"], "k", label="ma5", linewidth=0.5)
     ax_price.plot(df["ma10"], "y", label="ma10", linewidth=0.5)
     ax_price.plot(df["ma20"], "r", label="ma20", linewidth=0.5)
     ax_price.plot(df["upper"], "b--", label="upper", linewidth=0.5)
     ax_price.plot(df["lower"], "b--", label="upper", linewidth=0.5)
-    #bar_x_pos = np.arange(len(df.index))
+
     ax_vol.bar(df.index, df["volume"])
-    #ax_price.xaxis_date()
-    #ax_price.autoscale_view()
-    #plt.setp(plt.gca().get_xticklabels(), rotation=45, horizontalalignment='right')
-    #pdb.set_trace()
     fig.suptitle('{} {} {} 流通{}亿股'.format(info.industry, info[0], info.code, info.outstanding), fontsize=16)
-    #plt.show()
-    fig.savefig(r"/home/johnny/code/stock/{}-{}-{}.png".format(period, prefix, info.code))
-    plt.close(fig)
+    plt.show()
 
 def start_plot(period_type, stock_list, prefix=""):
     df_list = read_csv("basic-no3.csv")
@@ -264,22 +256,9 @@ def plot_stock_list(stock_list):
 if __name__ == "__main__":
     prefix="bull"
     my_current_list = ["000818", "002603", "002286", "000911", "000823", "002852", "603360","603859","601872"]
-    msgRoot, msgAlternative = get_email_mime(subject="60 minutes K")
-    #start_plot("60", my_current_list, "my_60_")
+    #msgRoot, msgAlternative = get_email_mime(subject="60 minutes K")
+    start_plot("60", my_current_list, "my_60_")
     #msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "day", my_current_list, "my_day610_")
-    msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "60", my_current_list, "my_60_")
-    #start_plot("15", week_list_610, "week_610_")
-    #start_plot("week", week_list_610, "week_610_")
-    #mylist = get_code_list(r"result\ma20-up.csv")
-    #mylist = get_code_list(r"mystocklist-detail.csv")
-    #start_plot("day", mylist, "ma20-")
-    #start_plot("60", mylist, "ma20-up")
-    #send_email() 
-    send_email_smtp(msgRoot)
-
-    msgRoot, msgAlternative = get_email_mime(subject="Day K")
-    #start_plot("60", my_current_list, "my_60_")
-    msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "day", my_current_list, "my_day_")
     #msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "60", my_current_list, "my_60_")
     #start_plot("15", week_list_610, "week_610_")
     #start_plot("week", week_list_610, "week_610_")
@@ -288,4 +267,17 @@ if __name__ == "__main__":
     #start_plot("day", mylist, "ma20-")
     #start_plot("60", mylist, "ma20-up")
     #send_email() 
-    send_email_smtp(msgRoot)
+    #send_email_smtp(msgRoot)
+
+    #msgRoot, msgAlternative = get_email_mime(subject="Day K")
+    #start_plot("60", my_current_list, "my_60_")
+    #msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "day", my_current_list, "my_day_")
+    #msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "60", my_current_list, "my_60_")
+    #start_plot("15", week_list_610, "week_610_")
+    #start_plot("week", week_list_610, "week_610_")
+    #mylist = get_code_list(r"result\ma20-up.csv")
+    #mylist = get_code_list(r"mystocklist-detail.csv")
+    #start_plot("day", mylist, "ma20-")
+    #start_plot("60", mylist, "ma20-up")
+    #send_email() 
+    #send_email_smtp(msgRoot)

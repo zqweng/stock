@@ -67,6 +67,20 @@ def ma(df):
     df['ma5'] = df['close'].rolling(5).mean()
     df['ma10'] = df['close'].rolling(10).mean()
     df['ma20'] = df['close'].rolling(20).mean()
+    df = df.astype(
+        {'open': 'float64', 'high': 'float64', 'close': 'float64', 'low': 'float64', 'volume': 'int64'})
+
+    inputs = {
+        'open': df.open.values,
+        'high': df.high.values,
+        'low': df.low.values,
+        'close': df.close.values,
+        'volume': df.volume.values
+    }
+
+    df['upper'], df['middle'], df['lower'] = BBANDS(inputs, 20, 2, 2)
+    df['width'] = df['upper'] - df['lower']
+    df = df.round(3)
     return df.sort_index(ascending=False)
 
 def boll(df):

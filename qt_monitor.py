@@ -1,8 +1,8 @@
+
+from PyQt5.QtCore import *
 import time
 import tushare as ts
 import pandas as pd
-from threading import Thread
-import socket
 import pdb
 import map_name_code as map_code
 import datetime
@@ -11,19 +11,14 @@ import json
 import numpy as np
 from pathlib import Path
 
-#df = myapi.read_csv(r"stock2monitor.csv")
-#df = dr5.get_a_across_b(df, period_of_days=1, cross_above=("close", "ma20"), cross_type="binary-cmp", period_type="week")
+class RealTimeDataTread(QThread):
 
-class RealTimeDataTread(Thread):
-    def __init__(self, textEdit = None, server_port=0):
-        Thread.__init__(self)
+    signal = pyqtSignal(str)
 
-        # text box for output
-        self.textEdit = textEdit
+    def __init__(self, parent =None):
+        super(RealTimeDataTread, self).__init__(parent)
 
         #
-        self.server_address = ('localhost', server_port)
-        self.socket_client = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.df = pd.read_csv("stock2monitor-volume.csv", converters={'code': lambda x: str(x)})
         self.df = self.df.set_index("code")
         self.retrieve_count = 0
@@ -57,9 +52,6 @@ class RealTimeDataTread(Thread):
 
     def run(self):
         while True:
-            self.textEdit.appendPlainText("start running")
-            self.textEdit.appendPlainText("start running")
-            pdb.set_trace()
             # sleep 10 seconds
             time.sleep(12)
 
@@ -76,13 +68,10 @@ class RealTimeDataTread(Thread):
             #    continue
             #pdb.set_trace()
             df = self.get_realtime_quote()
-            sent = self.socket_client.sendto(
-            df.to_json(orient='index').encode('utf-8'), self.server_address)
             del df
 
-
-    def test(self):
-        return 1
+    def __del__(self):
+        self.wait()
 
     def idx_range(self, size, start = 0, step = 8):
         # Looping through the file line by line
@@ -116,7 +105,7 @@ class RealTimeDataTread(Thread):
 
         # print current status
         self.retrieve_count += 1
-        #self.textEdit.appendPlainText("start index is {} ".format(start))
+        self.signal.emit("start {}".format(start))
         #print(df_network)
 
         for i in range(df_network.shape[0]):
@@ -137,7 +126,7 @@ class RealTimeDataTread(Thread):
                 self.df_result = self.df_result.append(
                     {'time': timestamp, 'code': code, 'volume': volume}, ignore_index=True)
                 self.df_result.to_csv("monitor-vol-result.csv")
-                #print("code {} has a high volume".format(code))
+                self.signal.emit("start {}".format("code {} has a high volume".format(code)))
 
             # save the volume
             self.df_vol.at[code, "curvol"] = volume
@@ -163,7 +152,5 @@ class RealTimeDataTread(Thread):
         return df_network
 
 if __name__ == "__main__":
-    while True:
-        obj = RealTimeDataTread(20001)
+        obj = RealTimeDataTread()
         obj.start()
-        obj.join()
