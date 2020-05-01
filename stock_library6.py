@@ -147,6 +147,13 @@ def check_unary_cmp(df, num, para1):
         return False
     return True
 
+def check_unary_max(df, num, para1):
+    df1 = df[0:num]
+    idx_max = df1[para1].idxmax()
+    time = df1["time"].loc[idx_max]
+
+    return max(df1[para1]), time
+
 def check_unary_cmp_self(df, i, para1):
     if para1[1] == "greater":
         diff = (df.loc[i][para1[0]] - df.loc[i+1][para1[0]]) / df.loc[i][para1[0]]
@@ -259,6 +266,12 @@ def find_a_cross_b(df, row, code, latest_n_days, result_list, para1, para2):
         if check_unary_cmp(df, latest_n_days, para1):
             result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, latest_n_days, 0, 0, 0)))
         return True
+
+    if para2 == "unary-max":
+        ret, time = check_unary_max(df, latest_n_days, para1)
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, latest_n_days, ret, time, 0)))
+        return True
+
 
     for i in range(latest_n_days):
         if para2 == "momentum" and i != 0 and check_momentum(df, i, para1):

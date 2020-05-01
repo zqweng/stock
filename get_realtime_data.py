@@ -50,6 +50,7 @@ def get_realtime_quote(list):
     df["p_change"] = round((df["price"]-df["pre_close"]) * 100 /df["pre_close"], 3)
 
     print(df)
+    return df
 """
     b1_v = df.b1_v.astype("int32")
     b2_v = df.b2_v.astype("int32")
@@ -90,8 +91,8 @@ def get_realtime_quote(list):
 """
 
 if __name__ == "__main__":
-    df = myapi.read_csv(r"result\ma20-2020-02-18-6p.csv")
-    li = df.index.to_list()
+    #df = myapi.read_csv(r"result\ma20-2020-02-18-6p.csv")
+    #li = df.index.to_list()
     ex_li = ["002328", "002258", "603839", "002002", "603920", "002688", "002373", "002237", "002829", "600267", "002756",
              "002803", "603583", "002383", "002180", "002527"]
     while True:

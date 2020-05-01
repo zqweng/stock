@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pandas as pd
 import baostock as bs
 from pathlib import Path
@@ -9,6 +10,61 @@ from email.mime.multipart import MIMEMultipart
 from smtplib import SMTP
 import smtplib
 import sys
+import os
+
+def send_email(topic="", content=""):
+    # me == my email address
+    # you == recipient's email address
+    me = "johnny.weng8@gmail.com"
+    you = "johnny.weng8@gmail.com"
+
+    # Create message container - the correct MIME type is multipart/alternative.
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = topic
+    msg['From'] = me
+    msg['To'] = you
+
+    # Create the body of the message (a plain-text and an HTML version).
+    text = "org"
+    html = """\
+    <html>
+    <head></head>
+    <body>
+        {}
+        <p>Hi!<br>
+        How are you html?<br>
+        Here is the <a href="https://www.python.org">link</a> you wanted.
+        </p>
+    </body>
+    </html>
+    """.format(content)
+
+    # Record the MIME types of both parts - text/plain and text/html.
+    part1 = MIMEText(text, 'plain')
+    part2 = MIMEText(html, 'html')
+
+    # Attach parts into message container.
+    # According to RFC 2046, the last part of a multipart message, in this case
+    # the HTML message, is best and preferred.
+    msg.attach(part1)
+    msg.attach(part2)
+
+    
+    # creates SMTP session 
+    s = smtplib.SMTP('smtp.gmail.com', 587) 
+    
+    # start TLS for security 
+    s.starttls() 
+    
+    # Authentication 
+    s.login("johnny.weng8@gmail.com", "Weng0073") 
+    
+    # sendmail function takes 3 arguments: sender's address, recipient's address
+    # and message to send - here it is sent as one string.
+    #s.sendmail(me, you, msg.as_string())
+    s.sendmail("johnny.weng8@gmail.com", "ruri299ceke@post.wordpress.com", msg.as_string())
+    s.quit()
+
 
 def email(df, subject="", to_addr="johnny.weng8@gmail.com", from_addr="johnny.weng8@gmail.com"):
     recipients = [to_addr]
@@ -60,11 +116,11 @@ def import_col(df_profit, df_info):
     return df_profit
 
 
-def test_fun2(start_date="2019-03-01", end_date="2020-12-31"):
-    df_all = None
+def get_profit_forecast(start_date="2020-03-01", end_date="2020-12-31"):
+    df_all = pd.DataFrame()
 
-    df_orig = read_csv(r"basic-no3.csv")
-
+    df_orig = read_csv(r"/home/johnny/code/stock/basic-no3.csv")
+    df_orig = df_orig[0:1000]
     #### 登陆系统 ####
     lg = bs.login()
     # 显示登陆返回信息
@@ -74,13 +130,16 @@ def test_fun2(start_date="2019-03-01", end_date="2020-12-31"):
     stock_list = df_orig.index.to_list()
     new_stock_list = ["sz.{}".format(code) if code[0] == '0' else "sh.{}".format(code) for code in stock_list]
 
+    num = 0
     for code in new_stock_list:
         rs_forecast_list = []
 
         #### 获取公司业绩预告 ####
         rs_forecast = bs.query_forecast_report(code, start_date, end_date)
-        print('query_forecast_reprot respond error_code:' + rs_forecast.error_code)
-        print('query_forecast_reprot respond  error_msg:' + rs_forecast.error_msg)
+        print('query_forecast_reprot respond error_code: {} / {}'.format(rs_forecast.error_code, num))
+        print('query_forecast_reprot respond  error_msg: {} / {}'.format(rs_forecast.error_msg, num))
+        num = num + 1
+
         while (rs_forecast.error_code == '0') & rs_forecast.next():
             # 分页查询，将每页信息合并在一起
             rs_forecast_list.append(rs_forecast.get_row_data())
@@ -95,13 +154,34 @@ def test_fun2(start_date="2019-03-01", end_date="2020-12-31"):
         else:
             df_all = pd.concat([df_all, df])
 
+    if df_all.empty:
+        print("no forecast retrieved ")
+        return df_all
+
     df1 = import_col(df_all, df_orig)
+    df1 = df1[df1["profitForcastType"]=="预增"]
+    df1 = df1.sort_values(by = "profitForcastExpPubDate")
     df1.to_csv(r"profit.csv")
     print(df1)
     #### 登出系统 ####
     bs.logout()
     return df1
 
+def send_profit_forecast():
+    df1 = get_profit_forecast()
+
+    if not df1.empty:
+        send_email(topic="profit-forecast", content=df1.to_html())
+
+
 if __name__ == "__main__":
-    df1 = test_fun2()
+    path = "/home/johnny/code/stock"
+    os.chdir(path)
+
+    df1 = get_profit_forecast()
+
     #email(df1, "profit")
+    #df1 = read_csv("profit.csv")
+
+    if not df1.empty:
+        send_email(topic="profit-forecast", content=df1.to_html())
