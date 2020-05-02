@@ -242,14 +242,16 @@ def plot_stock(stock_list, subject=""):
 
 
 def plot_stock_list(stock_list):
-    prefix="bull"
-    msgRoot, msgAlternative = get_email_mime(subject="60 minutes K")
-    msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "60", stock_list, "my_60_")
-    send_email_smtp(msgRoot)
+    frame_size = 25
+    for x in range(0, len(stock_list), frame_size):
 
-    msgRoot, msgAlternative = get_email_mime(subject="Day K")
-    msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "day", stock_list, "my_day_")
-    send_email_smtp(msgRoot)
+        msgRoot, msgAlternative = get_email_mime(subject="60 minutes K")
+        msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "60", stock_list[x:x+frame_size], "my_60_")
+        send_email_smtp(msgRoot)
+
+        msgRoot, msgAlternative = get_email_mime(subject="Day K")
+        msgRoot = start_plot_save_in_email(msgRoot, msgAlternative, "day", stock_list[x:x+frame_size], "my_day_")
+        send_email_smtp(msgRoot)
 
 
 

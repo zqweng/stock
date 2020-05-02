@@ -1,6 +1,7 @@
 import stock_library2 as lib2
 import driver5 as dr5
 import datetime
+import plot
 
 def counting_break_upper_band_after_n(offset=0, num = 8, type='day',  df1=None):
     lib2.head_offset = offset
@@ -11,6 +12,9 @@ def counting_break_upper_band_after_n(offset=0, num = 8, type='day',  df1=None):
         lib2.head_offset = i + offset
         df1 = dr5.get_a_across_b(df1, period_of_days=1, cross_above=("upper", "close"), cross_type="binary-cmp",
                                  period_type=type)
+
+    print(df1.index.to_list())
+    plot.plot_stock_list(df1.index.to_list())
 
     str_time = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     df1.to_csv("counting_close_above_upper_" + type + '-' + str_time + '_offset_' + str(offset) + '_days_' + str(num) + ".csv")
@@ -108,8 +112,4 @@ def counting_ma20_go_up():
 
 #df1 = counting_break_upper_band_after_n(type='15')
 df1 = counting_break_upper_band_after_n(type='15', offset=1)
-print(df1)
-df1 = counting_break_upper_band_after_n(type='15', offset=2)
-print(df1)
-df1 = counting_break_upper_band_after_n(type='15', offset=3)
 print(df1)

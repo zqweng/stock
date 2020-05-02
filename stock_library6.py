@@ -176,6 +176,7 @@ def find_a_cross_b(df, row, code, latest_n_days, result_list, para1, para2):
         for i in range(latest_n_days):
             if not check_binary_cmp(df, i, para1):
                 return False
+
         result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, df.iloc[0].p_change, 0, 0, 0)))
         return True
 
@@ -204,18 +205,13 @@ def find_a_cross_b(df, row, code, latest_n_days, result_list, para1, para2):
         return True
 
     if para2 == "unary-current-trend":
-        count = 1
-        if para1[0] == "up":
-            go_up = True
-        else:
-            go_up = False
+        count = 0
         for i in range(1, latest_n_days):
-            if (df.loc[i][para1[1]] >= df.loc[i+1][para1[1]]) == go_up:
+            #db.set_trace()
+            if df.loc[i][para1] >= df.loc[i+1][para1]:
                 count = count + 1
             else:
                 break
-        if not go_up:
-            count = -count
         print(code, ' count ', count)
         result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, count, 0, 0)))
         return True
@@ -242,6 +238,9 @@ def find_a_cross_b(df, row, code, latest_n_days, result_list, para1, para2):
                                   0, pct, 0)))
 
         return True
+
+   # if para2 = "future-price-up":
+
 
     if para2 == "vol-pct-count":
         df1 = df[0:latest_n_days].copy()

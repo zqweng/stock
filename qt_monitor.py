@@ -40,6 +40,7 @@ class RealTimeDataTread(QThread):
         self.df_vol = self.df_vol.set_index("code")
         self.df_vol.curtime = self.df_vol.curtime.astype("string")
         self.df_vol.lasttime = self.df_vol.lasttime.astype("string")
+        self.max_ratio = 0.0
 
         if Path("monitor-vol-result.csv").is_file():
             self.df_result = pd.read_csv("monitor-vol-result.csv")
@@ -105,13 +106,14 @@ class RealTimeDataTread(QThread):
 
         # print current status
         self.retrieve_count += 1
-        self.signal.emit("start {}".format(start))
-        #print(df_network)
+        print("start {}".format(start))
+        print(df_network)
 
         for i in range(df_network.shape[0]):
             code = df_network.loc[i].code
             volume = df_network.loc[i].volume
             timestamp = df_network.loc[i].time
+            max_vol = self.df_vol.loc[code].maxvol
 
             # calculate the volume during this period
             if not pd.isna(self.df_vol.loc[code].lastvol):
@@ -122,11 +124,16 @@ class RealTimeDataTread(QThread):
             #print("code {} delta volume is {}".format(code, delta_volume))
 
             # if volume is much higher than recent max, print a log
-            if delta_volume > (self.df_vol.loc[code].maxvol):
+            ratio = delta_volume/max_vol
+            print("ration is {}".format(ratio))
+            if 1 > ratio > self.max_ratio:
+                self.max_ratio = ratio
+                self.signal.emit("code {}  has a high volume {}".format(code, ratio))
+            if delta_volume > max_vol:
                 self.df_result = self.df_result.append(
                     {'time': timestamp, 'code': code, 'volume': volume}, ignore_index=True)
                 self.df_result.to_csv("monitor-vol-result.csv")
-                self.signal.emit("start {}".format("code {} has a high volume".format(code)))
+                self.signal.emit("code {} has a high volume".format(code))
 
             # save the volume
             self.df_vol.at[code, "curvol"] = volume
