@@ -9,7 +9,7 @@ import pdb
 # df_result = df_result.reindex(columns=df_result.columns.tolist() + ['totals', 'pe'])
 #df1["code"] = df1["code"].str.strip("szh.")
 # hist_dir = '/home/johnny/python/csv/'
-# stock_list_file = 'mystocklist-detail.csv'
+# stock_list_file = 'mystocklist_detail.csv'
 #df1 = df1.drop(columns="Unnamed: 0")
 #df_updated = df_new.loc[df_new.index.isin(df['code'])]
 #df1 = df1.loc[df1.index.isin(df.index)]
@@ -319,8 +319,8 @@ if __name__ == "__main__":
         ticker_list = r'/home/johnny/code/stock/basic-no3.csv'
 
     #ticker_list = r'/home/johnny/PycharmProjects/stock/stock2monitor-update.csv'
-    #load_history(tick_dir,ticker_list, 'w')
-    load_history(tick_dir, ticker_list, 'd')
+    load_history(tick_dir,ticker_list, 'w')
+    #load_history(tick_dir, ticker_list, 'd')
     #load_history_min(tick_dir, ticker_list, ktype_val="15")
     #load_history_min(tick_dir, 'basic-no3.csv', ktype_val='5')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', add_boll, 'w')

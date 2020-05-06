@@ -5,9 +5,10 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 import numpy as np
 import pdb
-import stock_sample
-from qt_ui_monitor import MonitorWindow
-from stock_sample import TrainingWindow
+import qt_training
+from qt_monitor import MonitorWindow
+from qt_training import TrainingWindow
+from qt_favorite import FavoriteWindow
 
 class Window(QMainWindow):
     def __init__(self):
@@ -26,31 +27,39 @@ class Window(QMainWindow):
 
     def qtMenu(self):
         mainMenu = self.menuBar()
-        pyGuiMenu = mainMenu.addMenu('File')
+        pyGuiMenu = mainMenu.addMenu('工具')
 
         subItemTable = QAction('Monitor', self)
         subItemTable.setShortcut("Ctrl+N")
         subItemTable.setStatusTip("New Window")
-
-        subItemTable.triggered.connect(self.newWindow)  # +++
-
+        subItemTable.triggered.connect(self.startMonitor)  # +++
         pyGuiMenu.addAction(subItemTable)
 
         subItemTable = QAction('Training', self)
         subItemTable.setShortcut("Ctrl+S")
         subItemTable.setStatusTip("New Window")
-
-        subItemTable.triggered.connect(self.newTrainingWindow)  # +++
-
+        subItemTable.triggered.connect(self.startTraining)  # +++
         pyGuiMenu.addAction(subItemTable)
 
-    def newWindow(self):  # +++
+        subItemTable = QAction('MyFavorite', self)
+        subItemTable.setShortcut("Ctrl+D")
+        subItemTable.setStatusTip("My Favorite")
+        subItemTable.triggered.connect(self.startFavorite)  # +++
+        pyGuiMenu.addAction(subItemTable)
+
+
+    def startMonitor(self):  # +++
         self.winTable = MonitorWindow()
         self.winTable.show()
 
-    def newTrainingWindow(self):  # +++
+    def startTraining(self):  # +++
         self.trainingWindow = TrainingWindow()
         self.trainingWindow.show()
+
+    def startFavorite(self):  # +++
+        self.favoriteWindow = FavoriteWindow()
+        self.favoriteWindow.show()
+
 
 app = QApplication(sys.argv)
 window = Window()

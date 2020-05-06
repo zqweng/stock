@@ -6,6 +6,19 @@ import stock_library2 as lib2
 import pdb
 import plot
 
+def weeks_up_above_40p():
+    df1 = None
+    lib2.head_offset = 2
+    df1 = dr5.get_price_up_with_percentage(period_of_days=1, p_change=(40, 1100), period_type='week')
+    print(df1.index.to_list())
+    plot.plot_stock_list(df1.index.to_list())
+
+    lib2.head_offset = 3
+    df1 = dr5.get_price_up_with_percentage(period_of_days=1, p_change=(40, 1100), period_type='week')
+    print(df1.index.to_list())
+    plot.plot_stock_list(df1.index.to_list())
+
+
 def counting_break_upper_band_after_n(offset=0, num = 8, type='day',  df1=None):
     lib2.head_offset = offset
     df1 = dr5.get_a_across_b(df1, period_of_days=1, cross_above=("close", "upper", 0.007), cross_type="binary-cmp",
@@ -64,5 +77,6 @@ df2 = dr5.get_a_across_b(df, period_of_days=1, cross_above=("close", "upper"), c
 """
 
 #df1 = counting_break_upper_band_after_n(offset=0)
-df1 = counting_ma20_go_up()
-print(df1)
+#df1 = counting_ma20_go_up()
+#print(df1)
+weeks_up_above_40p()

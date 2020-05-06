@@ -39,4 +39,4 @@ def create_resample_k(stock_list_file, start_date, end_date, resample_intv):
         df_resample_k.to_csv(result_file_name)
 
 if __name__ == "__main__":
-    create_resample_k('mystocklist-detail.csv', '2019-07-08', '2019-07-30','60min')
+    create_resample_k('mystocklist_detail.csv', '2019-07-08', '2019-07-30','60min')

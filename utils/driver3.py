@@ -7,7 +7,7 @@ from pathlib import Path
 
 # pdb.set_trace()
 
-stock_list_file = 'mystocklist-detail.csv'
+stock_list_file = 'mystocklist_detail.csv'
 
 # stock_list_file = 'test_list.csv'
 

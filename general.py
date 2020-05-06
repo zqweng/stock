@@ -4,7 +4,7 @@ import pdb
 import api as myapi
 
 def test_fun():
-    df_orig = myapi.read_csv(r"mystocklist-detail.csv")
+    df_orig = myapi.read_csv(r"mystocklist_detail.csv")
     stock_list=df_orig.index.to_list()
     new_stock_list = ["sz.{}".format(code) if code[0] == '0' else "sh.{}".format(code) for code in stock_list]
 
@@ -82,7 +82,7 @@ def test_fun2():
 
 test_fun2()
 """
-df_orig = myapi.read_csv(r"mystocklist-detail.csv")
+df_orig = myapi.read_csv(r"mystocklist_detail.csv")
 df_profit =  myapi.read_csv(r"result\mylist.csv")
 df = df_orig.loc[df_orig.index.intersection(df_profit.index)]
 pdb.set_trace()

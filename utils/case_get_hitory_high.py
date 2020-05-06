@@ -8,7 +8,7 @@ def get_one_year_high():
     stock_list_file = 'basic-no3.csv'
     tmpfile = Path().joinpath('result', 'get_one_year_high.csv')
 
-    # stock_list_file = 'mystocklist-detail.csv'
+    # stock_list_file = 'mystocklist_detail.csv'
     df = myapi.read_csv(stock_list_file)
     df = myapi.remove_unwanted_fields(df)
 

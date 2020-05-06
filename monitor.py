@@ -53,13 +53,8 @@ class RealTimeDataTread(Thread):
             self.df_result.time = self.df_result.time.astype('datetime64[ns]')
             self.df_result.set_index("time")
 
-        #pdb.set_trace()
-
     def run(self):
         while True:
-            self.textEdit.appendPlainText("start running")
-            self.textEdit.appendPlainText("start running")
-            pdb.set_trace()
             # sleep 10 seconds
             time.sleep(12)
 

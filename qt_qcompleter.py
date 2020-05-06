@@ -11,9 +11,9 @@ items_list = df["name"].to_list()
 #items_list=["漫步者","能科股份", "C","C++","Java","Python","JavaScript","C#","Swift","go","Ruby","Lua","PHP"]
 
 ################################################
-class Widget(QWidget):
+class StockCompleter(QWidget):
     def __init__(self, *args, **kwargs):
-        super(Widget, self).__init__(*args, **kwargs)
+        super(StockCompleter, self).__init__(*args, **kwargs)
         layout = QHBoxLayout(self)
         self.lineedit = QLineEdit(self, minimumWidth=200)
         self.combobox = QComboBox(self, minimumWidth=200)
@@ -79,6 +79,6 @@ class Widget(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    w = Widget()
+    w = StockCompleter()
     w.show()
     sys.exit(app.exec_())

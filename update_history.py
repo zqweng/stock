@@ -26,7 +26,7 @@ import datetime
 
 
 # hist_dir = '/home/johnny/python/csv/'
-# stock_list_file = 'mystocklist-detail.csv'
+# stock_list_file = 'mystocklist_detail.csv'
 
 def load_history(hist_dir, stock_list_file, ktype_val='D'):
     default_start_date = ''
@@ -209,8 +209,8 @@ def update_day():
 
 if __name__ == "__main__":
     tick_dir = Path().joinpath('..', '..', 'stockdata')
-    #'mystocklist-detail.csv'
-    #load_history(tick_dir, 'mystocklist-detail.csv')
+    #'mystocklist_detail.csv'
+    #load_history(tick_dir, 'mystocklist_detail.csv')
     #add_history_with_MACD(tick_dir, 'basic-no3.csv')
     load_history(tick_dir, 'basic-no3.csv')
     #update_history_with_callback(tick_dir, 'basic-no3.csv', recalculate_ma10, )

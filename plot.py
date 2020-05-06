@@ -254,7 +254,6 @@ def plot_stock_list(stock_list):
         send_email_smtp(msgRoot)
 
 
-
 if __name__ == "__main__":
     prefix="bull"
     my_current_list = ["000818", "002603", "002286", "000911", "000823", "002852", "603360","603859","601872"]
@@ -265,7 +264,7 @@ if __name__ == "__main__":
     #start_plot("15", week_list_610, "week_610_")
     #start_plot("week", week_list_610, "week_610_")
     #mylist = get_code_list(r"result\ma20-up.csv")
-    #mylist = get_code_list(r"mystocklist-detail.csv")
+    #mylist = get_code_list(r"mystocklist_detail.csv")
     #start_plot("day", mylist, "ma20-")
     #start_plot("60", mylist, "ma20-up")
     #send_email() 
@@ -278,7 +277,7 @@ if __name__ == "__main__":
     #start_plot("15", week_list_610, "week_610_")
     #start_plot("week", week_list_610, "week_610_")
     #mylist = get_code_list(r"result\ma20-up.csv")
-    #mylist = get_code_list(r"mystocklist-detail.csv")
+    #mylist = get_code_list(r"mystocklist_detail.csv")
     #start_plot("day", mylist, "ma20-")
     #start_plot("60", mylist, "ma20-up")
     #send_email() 

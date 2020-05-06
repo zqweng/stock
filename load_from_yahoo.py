@@ -8,7 +8,7 @@ import pdb
 
 
 # hist_dir = '/home/johnny/python/csv/'
-# stock_list_file = 'mystocklist-detail.csv'
+# stock_list_file = 'mystocklist_detail.csv'
 
 
 def update_history_with_callback(hist_dir, stock_list_file, callback, ktype_val='W'):

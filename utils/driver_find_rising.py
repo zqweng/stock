@@ -18,7 +18,7 @@ import pdb
 
 start_date = '2019-01-1'
 end_date = '2019-08-25'
-stock_list_file = 'mystocklist-detail.csv'
+stock_list_file = 'mystocklist_detail.csv'
 resample_intv = '60min'
 
 df = pd.read_csv(stock_list_file, converters={'code': lambda x: str(x)})

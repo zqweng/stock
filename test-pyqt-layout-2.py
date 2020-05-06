@@ -52,7 +52,6 @@ class prowler(QWidget):
         self.switchSig.emit(self.sendData)
 
 
-
 class main(QWidget):
     def __init__(self, parent=None):
         super(main, self).__init__(parent)
