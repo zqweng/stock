@@ -15,9 +15,6 @@ import pdb
 class FavoriteTable(QTableWidget):
     def __init__(self, parent=None):
         super(FavoriteTable, self).__init__(parent)
-        self.setWindowTitle("自选股实时行情")  # 设置表格名称
-        self.setWindowIcon(QIcon("ok.png"))  # 设置图标（图片要存在）
-        #self.resize(600, 200)  # 设置表格尺寸（整体大小）
 
         self.row_name = self.get_favorite_list()
         self.name2row_map = {i[1]: i[0] for i in enumerate(self.row_name)}
@@ -81,7 +78,6 @@ class FavoriteTable(QTableWidget):
         return df["name"].to_list()
 
     def __del__(self):
-        pdb.set_trace()
         print('Destructor called, Employee deleted.')
         self.thread.stop()
 
@@ -112,7 +108,7 @@ class FavoriteWindow(QWidget):
 
 
     def Connect(self):
-        self.stockCompleter = StockCompleter()
+        self.stockCompleter = StockCompleter(self)
         self.stockCompleter.show()
         #self.stockCompleter.switchSig.connect(self.table.update_stock_data)
 

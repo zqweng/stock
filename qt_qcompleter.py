@@ -7,74 +7,109 @@ import pdb
 ################################################
 
 df = pd.read_csv("basic-no3.csv", converters={"code": lambda x :str(x)})
+#items_list = df["name"].to_list()
+df_favorite = pd.read_csv("mystocklist_detail.csv", converters={"code": lambda x :str(x)})
+
+df_new_all = pd.read_csv("new_stock_list.csv", converters={"code": lambda x :str(x)})
+
 items_list = df["name"].to_list()
-#items_list=["漫步者","能科股份", "C","C++","Java","Python","JavaScript","C#","Swift","go","Ruby","Lua","PHP"]
+
+df_name = df.set_index("name")
+
+list_list = ["所有股票", "自选股"]
 
 ################################################
 class StockCompleter(QWidget):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, canvas, *args, **kwargs):
         super(StockCompleter, self).__init__(*args, **kwargs)
         layout = QHBoxLayout(self)
-        self.lineedit = QLineEdit(self, minimumWidth=200)
-        self.combobox = QComboBox(self, minimumWidth=200)
-        self.combobox.setEditable(True)
 
+        self.stock_combobox = QComboBox(self, minimumWidth=200)
+        self.stock_combobox.setEditable(True)
 
-        layout.addWidget(QLabel("QLineEdit", self))
-        layout.addWidget(self.lineedit)
+        self.list_combobox = QComboBox(self, minimumWidth=200)
+        self.list_combobox.setEditable(True)
+
         layout.addItem(QSpacerItem(20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
-
-        layout.addWidget(QLabel("QComboBox", self))
-        layout.addWidget(self.combobox)
-
+        layout.addWidget(QLabel("名单选项", self))
+        layout.addWidget(self.list_combobox)
+        layout.addWidget(QLabel("股票名单", self))
+        layout.addWidget(self.stock_combobox)
 
         #初始化combobox
-        self.init_lineedit()
         self.init_combobox()
 
-
         #增加选中事件
-        self.combobox.activated.connect(self.on_combobox_Activate)
+        self.stock_combobox.activated.connect(self.on_stock_combobox_Activate)
+        self.list_combobox.activated.connect(self.on_list_combobox_Activate)
 
-
-
-    def init_lineedit(self):
-        # 增加自动补全
-        self.completer = QCompleter(items_list)
-        # 设置匹配模式  有三种： Qt.MatchStartsWith 开头匹配（默认）  Qt.MatchContains 内容匹配  Qt.MatchEndsWith 结尾匹配
-        self.completer.setFilterMode(Qt.MatchContains)
-        # 设置补全模式  有三种： QCompleter.PopupCompletion（默认）  QCompleter.InlineCompletion   QCompleter.UnfilteredPopupCompletion
-        self.completer.setCompletionMode(QCompleter.PopupCompletion)
-        # 给lineedit设置补全器
-        self.lineedit.setCompleter(self.completer)
-
-
+        self.canvas = canvas
 
     def init_combobox(self):
         # 增加选项元素
         for i in range(len(items_list)):
-            self.combobox.addItem(items_list[i])
-        self.combobox.setCurrentIndex(-1)
+            self.stock_combobox.addItem(items_list[i])
+        self.stock_combobox.setCurrentIndex(-1)
+
+        for i in range(len(list_list)):
+            self.list_combobox.addItem(list_list[i])
+        self.list_combobox.setCurrentIndex(-1)
 
         # 增加自动补全
-        self.completer = QCompleter(items_list)
-        self.completer.setFilterMode(Qt.MatchContains)
-        self.completer.setCompletionMode(QCompleter.PopupCompletion)
-        self.combobox.setCompleter(self.completer)
+        completer = QCompleter(items_list)
+        completer.setFilterMode(Qt.MatchContains)
+        completer.setCompletionMode(QCompleter.PopupCompletion)
+        self.stock_combobox.setCompleter(completer)
+        self.curindex_stock_combobox = self.stock_combobox.currentIndex()
+
+        completer = QCompleter(list_list)
+        completer.setFilterMode(Qt.MatchContains)
+        completer.setCompletionMode(QCompleter.PopupCompletion)
+        self.list_combobox.setCompleter(completer)
+        self.curindex_list_combobox = self.list_combobox.currentIndex()
 
 
-    def on_combobox_Activate(self, index):
-        print(self.combobox.count())
-        print(self.combobox.currentIndex())
-        print(self.combobox.currentText())
-        print(self.combobox.currentData())
-        print(self.combobox.itemData(self.combobox.currentIndex()))
-        print(self.combobox.itemText(self.combobox.currentIndex()))
-        print(self.combobox.itemText(index))
+    def on_stock_combobox_Activate(self, index):
+        print(self.stock_combobox.count())
+        print(self.stock_combobox.currentIndex())
+        print(self.stock_combobox.currentText())
+        print(self.stock_combobox.currentData())
+        print(self.stock_combobox.itemData(self.stock_combobox.currentIndex()))
+        print(self.stock_combobox.itemText(self.stock_combobox.currentIndex()))
+        print(self.stock_combobox.itemText(index))
 
+        name = self.stock_combobox.currentText()
+        code = df_name.loc[name].code
+        self.canvas.set_new_code(code, name)
 
+    def on_list_combobox_Activate(self, index):
+        print(self.list_combobox.count())
+        print(self.list_combobox.currentIndex())
+        print(self.list_combobox.currentText())
+        print(self.list_combobox.currentData())
+        print(self.list_combobox.itemData(self.list_combobox.currentIndex()))
+        print(self.list_combobox.itemText(self.list_combobox.currentIndex()))
+        print(self.list_combobox.itemText(index))
 
+        """
+        curidx = self.list_combobox.currentIndex()
+        if self.curindex_list_combobox != curidx:
+            pdb.set_trace()
+            if curidx == 0:
+                completer = QCompleter(items_list)
+                completer.setFilterMode(Qt.MatchContains)
+                completer.setCompletionMode(QCompleter.PopupCompletion)
+                self.stock_combobox.setCompleter(completer)
+            else:
+                completer = QCompleter(favor_list)
+                completer.setFilterMode(Qt.MatchContains)
+                completer.setCompletionMode(QCompleter.PopupCompletion)
+                self.stock_combobox.setCompleter(completer)
 
+            self.curindex_list_combobox = curidx
+
+        
+        """
 
 
 if __name__ == "__main__":

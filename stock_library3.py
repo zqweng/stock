@@ -51,9 +51,10 @@ def ma_update(df_old, df_new):
     }
 
     df_concat['upper'], df_concat['middle'], df_concat['lower'] = BBANDS(inputs, 20, 2, 2)
+    df_concat['width'] = df_concat['upper'] - df_concat['lower']
     df_concat = df_concat.round(3)
 
-    df_result = df_concat[-len(df_new.index):]
+    df_result = df_concat.tail(len(df_new.index))
     return df_result.sort_index(ascending=False)
 
 """

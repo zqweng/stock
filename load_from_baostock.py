@@ -73,6 +73,9 @@ def find_sub_hist_dir(hist_dir, ktype_val):
         hist_dir = os.path.join(hist_dir, '60')
     elif ktype_val == '15':
         hist_dir = os.path.join(hist_dir, '15')
+    elif ktype_val == '30':
+        hist_dir = os.path.join(hist_dir, '30')
+
     if not os.path.exists(hist_dir):
         os.mkdir(hist_dir)
 
@@ -305,7 +308,7 @@ def update_stock_data():
         tick_dir = r'/home/johnny/stockdata-bao'
         ticker_list = r'/home/johnny/code/stock/basic-no3.csv'
 
-    load_history_min(tick_dir, ticker_list, ktype_val="15")
+    load_history_min(tick_dir, ticker_list, ktype_val="30")
     #load_history(tick_dir, ticker_list, 'w')
     load_history(tick_dir, ticker_list, 'd')
     load_history_min(tick_dir, ticker_list)

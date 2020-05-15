@@ -1,12 +1,14 @@
-from PyQt5.QtWidgets import QMainWindow, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QPushButton, QHBoxLayout, QVBoxLayout,QWidget
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import pandas as pd
 import random
 from mpl_finance import candlestick2_ohlc
+from qt_qcompleter import *
+
 import pdb
 
-class TrainingWindow(QMainWindow):
+class TrainingWindow(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -22,16 +24,30 @@ class TrainingWindow(QMainWindow):
         self.MyUI()
 
     def MyUI(self):
-        self.canvas = Canvas(self, width=12.8, height=9.6)
-        self.canvas.move(0, 0)
+        self.canvas = Canvas(width=12.8, height=9.6, code="002001")
 
+        hlayout = QHBoxLayout()
         button = QPushButton("向前", self)
-        button.move(500, 900)
         button.clicked.connect(self.slot_method_next)
 
         button2 = QPushButton("向后", self)
-        button2.move(700, 900)
         button2.clicked.connect(self.slot_method_prev)
+
+        hlayout.addWidget(button)
+        hlayout.addWidget(button2)
+
+        h2layout = QHBoxLayout()
+
+        completer = StockCompleter(self.canvas)
+        h2layout.addWidget(completer)
+
+        #
+        vlayout = QVBoxLayout()
+        vlayout.addWidget(self.canvas)
+        vlayout.addLayout(hlayout)
+        vlayout.addLayout(h2layout)
+
+        self.setLayout(vlayout)
 
     def slot_method_next(self):
         self.canvas.clear_fig()
@@ -47,9 +63,9 @@ class TrainingWindow(QMainWindow):
 
 
 class Canvas(FigureCanvas):
-    def __init__(self, parent=None, width=6.4, height=4.8, dpi=100):
+    def __init__(self, parent=None, width=6.4, height=4.8, dpi=100, code=""):
         self.fig = Figure(figsize=(width, height), dpi=dpi)
-        #self.axe = self.fig.subplots()
+
         FigureCanvas.__init__(self, self.fig)
         self.setParent(parent)
 
@@ -57,7 +73,7 @@ class Canvas(FigureCanvas):
         self.set_axe()
 
         #
-        self.sample = StockSample(self.axe)
+        self.sample = StockSample(self.axe, code)
 
     def plot_next(self):
         self.sample.plot_next(self.axe)
@@ -75,20 +91,28 @@ class Canvas(FigureCanvas):
         self.axe.append(self.fig.add_subplot(gs[0:-1, :]))
         self.axe.append(self.fig.add_subplot(gs[-1:, :]))
 
-class StockSample():
-    def __init__(self, ax):
+    def set_new_code(self, code):
+        self.clear_fig()
+        del self.sample
+        self.sample = StockSample(self.axe, code)
+        self.draw()
 
-        code = "002152"
+class StockSample():
+    def __init__(self, ax, code=""):
+
+        self.start_plot(ax, code)
+
+    def start_plot(self, ax, code = ""):
         self.df = pd.read_csv("/home/johnny/stockdata-bao/day/{}.csv".format(code), nrows=300)
         self.max_record = self.df.shape[0]
         self.df = self.df.iloc[::-1]
-        self.df = self.df.reset_index()
-        self.counter = 0
+        #self.df = self.df.reset_index()
+        self.counter = 130
         self.display_num = 150
 
-        end_index = random.randint(0 , len(self.df.index))
+        df_slice = self.df[self.counter: self.counter + self.display_num]
 
-        df_slice = self.df[0: self.display_num]
+        df_slice = df_slice.reset_index()
 
         self.plot(ax, df_slice)
 

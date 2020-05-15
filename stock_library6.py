@@ -177,7 +177,8 @@ def find_a_cross_b(df, row, code, latest_n_days, result_list, para1, para2):
             if not check_binary_cmp(df, i, para1):
                 return False
 
-        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, df.iloc[0].p_change, 0, 0, 0)))
+        #result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, df.iloc[0].p_change, 0, 0, 0)))
+        result_list.append(tuple((name, code, df.loc[0].date, 0, latest_n_days, 0, 0, 0, 0)))
         return True
 
     if para2 == "binary-cmp-pct":

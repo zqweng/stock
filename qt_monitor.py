@@ -1,6 +1,6 @@
 
 from PyQt5.QtCore import *
-from PyQt5.QtWidgets import QApplication, QWidget, QPlainTextEdit, QVBoxLayout, QListWidget, QPushButton, QGridLayout
+from PyQt5.QtWidgets import QApplication, QWidget, QTextEdit, QVBoxLayout, QListWidget, QPushButton, QGridLayout
 import time
 import tushare as ts
 import pandas as pd
@@ -11,6 +11,7 @@ import os
 import json
 import numpy as np
 from pathlib import Path
+from qt_monitor_price import *
 
 class RealTimeDataTread(QThread):
 
@@ -172,30 +173,21 @@ class MonitorWindow(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        """
-        vbox = QVBoxLayout()
-        plainText = QPlainTextEdit()
-        plainText.setPlaceholderText("This is some text for our plaintextedit")
+        self.thread = MonitorPriceTread()
+        self.df = pd.DataFrame(columns=["code", "name"])
+        self.df.index = self.df["code"]
 
-        plainText.setReadOnly(True)
-
-        text = "Please subscribe the channel and like the videos"
-
-        plainText.appendPlainText(text)
-
-        plainText.setUndoRedoEnabled(False)
-
-        vbox.addWidget(plainText)
-
-        self.setLayout(vbox)
-        """
-
-        self.thread = RealTimeDataTread()
         self.listFile = QListWidget()
         self.btnStart = QPushButton("start")
-        layout = QGridLayout(self)
-        layout.addWidget(self.listFile, 0, 0, 1, 2)
-        layout.addWidget(self.btnStart, 1, 1)
+        self.textEdit = QTextEdit()
+
+        layout = QVBoxLayout()
+        layout.addWidget(self.listFile)
+        layout.addWidget(self.btnStart)
+        layout.addWidget(self.textEdit)
+
+        self.setLayout(layout)
+
         self.btnStart.clicked.connect(self.slotStart)
         self.thread.signal.connect(self.slotAdd)
 
@@ -205,6 +197,14 @@ class MonitorWindow(QWidget):
 
     def slotAdd(self,file_inf):
         self.listFile.addItem(file_inf)
+        string_list = file_inf.split(',')
+
+        if not string_list[0] in self.df["code"].values:
+
+            print("add {} to dataframe".format(string_list[0]))
+            self.df = self.df.append({"code": string_list[0], "name": string_list[1]}, ignore_index=True)
+            print(self.df)
+
 
 
 
