@@ -104,7 +104,7 @@ class InfoTable(QWidget):
 
     def set_new_code(self, code, name):
         print(code)
-        df = pd.read_csv("财报/{}.csv".format(name))
+        df = pd.read_csv("财报/{}.csv".format(code))
         self.widget = PandasWidget(df)
         self.widget.show()
 

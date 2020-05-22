@@ -9,6 +9,7 @@ import pandas as pd
 import os
 import tushare as ts
 from load_from_baostock import *
+import socket
 
 def weeks_up_above_40p():
     df1 = None
@@ -95,8 +96,12 @@ def search_func(cmd_list):
         if df1.empty:
             if "%" in item2:
                 percent = float(item2[:-1])
+                if cmd_dic["operator"] == "大于":
+                    range = (percent, 11)
+                else:
+                    range = (-percent, percent)
                 df1 = dr5.get_price_up_with_percentage(period_of_days=duration + 1,
-                                                       p_change=(percent, 11),
+                                                       p_change=range,
                                                        period_type=cmd_dic["period_type"])
             else:
                 df1 = dr5.get_a_across_b(period_of_days=duration + 1,
@@ -106,8 +111,14 @@ def search_func(cmd_list):
         else:
             if "%" in item2:
                 percent = float(item2[:-1])
-                df1 = dr5.get_price_up_with_percentage(period_of_days=duration + 1,
-                                                       p_change=(percent, 11),
+                if cmd_dic["operator"] == "大于":
+                    range = (percent, 11)
+                else:
+                    range = (-percent, percent)
+                #pdb.set_trace()
+                df1 = dr5.get_price_up_with_percentage(df1,
+                                                       period_of_days=duration + 1,
+                                                       p_change=range,
                                                        period_type=cmd_dic["period_type"])
             else:
                 df1 = dr5.get_a_across_b(df1,
@@ -116,7 +127,14 @@ def search_func(cmd_list):
                                          cross_type="binary-cmp",
                                          period_type=cmd_dic["period_type"])
 
-        print(df1)
+
+    #print(df1)
+    server_address = ('localhost', 20001)
+    socket_client = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    sent = socket_client.sendto(
+                     df1.to_json(orient='index').encode('utf-8'), server_address)
+
+    print("send {} bytes to udp server".format(sent))
 
     df1.to_csv("search.csv")
 

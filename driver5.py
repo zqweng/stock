@@ -3,7 +3,7 @@ import pandas as pd
 import api as myapi
 from pathlib import Path
 import pdb
-
+import inspect
 
 def get_w_shape():
     stock_list_file = 'basic-no3.csv'
@@ -95,6 +95,7 @@ def get_price_above(df=None, type ="close above ma20", period_of_days=1, stock_l
     return df_result
 
 def get_price_up_with_percentage(df=None, p_change=(4,10), period_of_days=10, stock_list=None, period_type='day'):
+    print(inspect.stack()[0][3])
     if df is None and stock_list is None:
         stock_list_file = 'basic-no3.csv'
         # stock_list_file = 'mystocklist_detail.csv'

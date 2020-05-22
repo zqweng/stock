@@ -1,6 +1,6 @@
 
 from PyQt5.QtCore import *
-from PyQt5.QtWidgets import QApplication, QWidget, QTextEdit, QVBoxLayout, QListWidget, QPushButton, QGridLayout
+from PyQt5.QtWidgets import *
 import time
 import tushare as ts
 import pandas as pd
@@ -12,6 +12,7 @@ import json
 import numpy as np
 from pathlib import Path
 from qt_monitor_price import *
+import webbrowser
 
 class RealTimeDataTread(QThread):
 
@@ -160,6 +161,23 @@ class RealTimeDataTread(QThread):
 
         return df_network
 
+
+class MyListWidget(QListWidget):
+    def __init__(self):
+        super(MyListWidget, self).__init__()
+
+    def clicked(self,item):
+        str_list = item.text().split(',')
+        if (str_list[0][0] == '0'):
+            code = 'sz' + str_list[0]
+        else:
+            code = 'sh' + str_list[0]
+
+        url_str = "http://vip.stock.finance.sina.com.cn/moneyflow/#!ssfx!{}".format(code)
+        webbrowser.open(url_str)  # Go to example.com
+        #QMessageBox.information(self, "ListWidget", "你选择了: "+item.text())
+
+
 class MonitorWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -177,9 +195,11 @@ class MonitorWindow(QWidget):
         self.df = pd.DataFrame(columns=["code", "name"])
         self.df.index = self.df["code"]
 
-        self.listFile = QListWidget()
+        self.listFile = MyListWidget()
         self.btnStart = QPushButton("start")
         self.textEdit = QTextEdit()
+
+        self.listFile.itemClicked.connect(self.listFile.clicked)
 
         layout = QVBoxLayout()
         layout.addWidget(self.listFile)

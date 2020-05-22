@@ -172,6 +172,43 @@ def plot(df, period, info, prefix=""):
     fig.suptitle('{} {} {} 流通{}亿股'.format(info.industry, info[0], info.code, info.outstanding), fontsize=16)
     plt.show()
 
+def plot_simple(df, name="", subtitle=""):
+    mpl.use('TkAgg')
+
+    plt.rcParams['font.sans-serif'] = ['SimHei']
+
+    fig = plt.figure()
+
+    #pdb.set_trace()
+    ax_price = plt.subplot2grid((10, 10), (0, 0), colspan=10, rowspan=8)
+    ax_vol = plt.subplot2grid((10, 10), (8, 0), colspan=10)
+    #ax_price = fig.subplots()
+
+    fig.subplots_adjust(bottom=0.2)
+    fig.set_size_inches(10, 8)
+    candlestick2_ohlc(ax_price, df['open'], df['high'], df['low'], df['close'], width=0.6)
+    #ax_price.plot(df["ma5"], "k", label="ma5", linewidth=0.5)
+    #ax_price.plot(df["ma10"], "y", label="ma10", linewidth=0.5)
+    ax_price.plot(df["ma20"], "r", label="ma20", linewidth=0.5)
+    ax_price.plot(df["upper"], "b", label="upper", linewidth=1)
+    ax_price.plot(df["lower"], "b--", label="upper", linewidth=0.5)
+
+    if "predict" in df.columns:
+        ax_price.plot(df["predict"], color='red', linewidth=2)
+        #for x, y in zip(df.index, df["predict"]):
+        #    ax_price.text(x,y, "{}".format(y))
+
+    ax_vol.bar(df.index, df["volume"])
+    if subtitle != "":
+        fig.suptitle(subtitle, fontsize=16)
+
+    if name == "":
+        plt.show()
+    else:
+        fig.savefig("pic/{}.png".format(name))
+    plt.close(fig)
+
+
 def start_plot(period_type, stock_list, prefix=""):
     df_list = read_csv("basic-no3.csv")
     df_list["code"] = df_list.index

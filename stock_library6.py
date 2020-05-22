@@ -302,7 +302,11 @@ def find_price_above(df, name, code, latest_n_days, result_list, para1, para2):
 
 
 def find_price_up_with_percentage(df, row, code, latest_n_days, result_list, para1, para2):
+
     for i in range(latest_n_days):
         if para1[1] >= df.loc[i].p_change >= para1[0]:
-            result_list.append(tuple((row.name, code, df.loc[i].date, 0, latest_n_days, 0)))
-            return True
+            continue
+        else:
+            return False
+    result_list.append(tuple((row.name, code, df.loc[i].date, 0, latest_n_days, 0)))
+    return True

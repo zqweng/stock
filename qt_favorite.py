@@ -9,6 +9,7 @@ from qt_qcompleter import StockCompleter
 import pandas as pd
 from qt_realtime_thread import QRealTimeTread
 import json
+import pandas as pd
 import pdb
 
 
@@ -40,13 +41,6 @@ class FavoriteTable(QTableWidget):
         self.setVerticalHeaderLabels([str(i[0]) for i in enumerate(self.row_name)])  # 设置行名称
 
 
-        #header = self.horizontalHeader()
-        #for i in range(0,len(column_name)):
-            #header.setSectionResizeMode(i, QtWidgets.QHeaderView.ResizeToContents)
-
-        self.thread = QRealTimeTread()
-        self.thread.signal.connect(self.update_stock_data)
-        self.thread.start()
 
     def update_item_data(self, data):
         """更新内容"""
@@ -84,6 +78,16 @@ class FavoriteTable(QTableWidget):
 
 
 class FavoriteWindow(QWidget):
+    """
+    实时显示自选股行情， 自选股存放在一个文件中 "mystocklist_detail.csv"
+
+    股票接收是通过一个线程，接收到的数据经过处理是一个dataframe, 通过json把它转化成序列，
+    通过信号传给窗口类
+
+    该窗口类包含一个按钮一个表格类。 按钮用来增加自选股，表格类显示股票行情。
+
+    """
+
     def __init__(self, parent=None):
         super(FavoriteWindow, self).__init__(parent)
 
@@ -106,11 +110,32 @@ class FavoriteWindow(QWidget):
         self.OpenBtn.clicked.connect(self.Connect)
         self.setWindowTitle("Favorite")
 
+        self.thread = QRealTimeTread()
+        self.thread.signal.connect(self.table.update_stock_data)
+        self.thread.start()
+
+        df = pd.read_csv("basic-no3.csv", converters={'code': lambda x: str(x)})
+        self.code_list = df["code"].to_list()
 
     def Connect(self):
-        self.stockCompleter = StockCompleter(self)
-        self.stockCompleter.show()
-        #self.stockCompleter.switchSig.connect(self.table.update_stock_data)
+        # 1为默认选中选项目，True/False  列表框是否可编辑。
+
+        code, ok = QInputDialog.getItem(self, "输入股票代码", "这是提示信息\n\n请选择:", self.code_list, 1, True)
+        df = pd.read_csv("mystocklist_detail.csv", converters={"code": lambda x: str(x)})
+        df_all = pd.read_csv("basic-no3.csv", converters={'code': lambda x: str(x)})
+
+        if code not in df["code"].values:
+            df_new = df_all[df_all["code"] == code]
+            if not df_new.empty:
+                df_new = pd.concat([df, df_new], ignore_index=True)
+                df_new = df_new.drop(columns="Unnamed: 0")
+                df_new.to_csv("mystocklist_detail.csv")
+
+
+
+
+
+
 
 
 if __name__ == '__main__':

@@ -9,9 +9,11 @@ import json
 import pdb
 import gzip
 import pickle
+from qt_udp_server import *
 
-price_list = ["close","ma20","upper"]
-type_list = ["day","60","30"]
+price_list = ["close","ma20","upper", "high"]
+type_list = ["day","week","60","30"]
+operator_list = ["大于", "小于"]
 
 class SearchWidget(QWidget):
     def __init__(self, parent=None):
@@ -24,10 +26,13 @@ class SearchWidget(QWidget):
         self.cbOffsetTo.addItems([str(i) for i in range(0, 50)])
 
         self.cbCmpDataType = QComboBox()
-        self.cbCmpDataType.addItems([type for type in type_list])
+        self.cbCmpDataType.addItems(type_list)
 
         self.cbCmpData1 = QComboBox()
-        self.cbCmpData1.addItems([price for price in price_list])
+        self.cbCmpData1.addItems(price_list)
+
+        self.cbOperator = QComboBox()
+        self.cbOperator.addItems(operator_list)
 
         self.cbCmpData2 = QComboBox()
         self.cbCmpData2.addItems([price for price in price_list])
@@ -43,7 +48,7 @@ class SearchWidget(QWidget):
         hlayout.addWidget(self.cbOffsetTo)
         hlayout.addWidget(self.cbCmpDataType)
         hlayout.addWidget(self.cbCmpData1)
-        hlayout.addWidget(QLabel("大于"))
+        hlayout.addWidget(self.cbOperator)
         hlayout.addWidget(self.cbCmpData2)
         self.setLayout(hlayout)
 
@@ -57,7 +62,8 @@ class SearchWidget(QWidget):
                 "start_offset": start_day_off,
                 "end_offset": end_day_off,
                 "cross_over": (self.cbCmpData1.currentText(), self.cbCmpData2.currentText()),
-                "period_type": self.cbCmpDataType.currentText()
+                "period_type": self.cbCmpDataType.currentText(),
+                "operator": self.cbOperator.currentText()
             }
 
             return command_dic
@@ -71,6 +77,7 @@ class SearchWidget(QWidget):
         self.cbCmpData1.setCurrentText(str(dict["cross_over"][0]))
         self.cbCmpData2.setCurrentText(str(dict["cross_over"][1]))
         self.cbCmpDataType.setCurrentText(str(dict["period_type"]))
+        self.cbOperator.setCurrentText(str(dict["operator"]))
 
 
 
@@ -82,17 +89,17 @@ class TabSearch(QTabWidget):
         #创建3个选项卡小控件窗口
         self.tab1=QWidget()
         self.tab2=QWidget()
-        self.tab3=QWidget()
+
 
         #将三个选项卡添加到顶层窗口中
         self.addTab(self.tab1, "Tab 1")
         self.addTab(self.tab2, "Tab 2")
-        self.addTab(self.tab3, "Tab 3")
+
 
         #每个选项卡自定义的内容
         self.tab1UI()
         self.tab2UI()
-        self.tab3UI()
+
 
     def tab1UI(self):
         #表单布局
@@ -136,19 +143,6 @@ class TabSearch(QTabWidget):
         self.setTabText(1, '通用')
         self.tab2.setLayout(vlayout)
 
-    def tab3UI(self):
-        #水平布局
-        layout=QHBoxLayout()
-
-        #添加控件到布局中
-        layout.addWidget(QLabel('科目'))
-        layout.addWidget(QCheckBox('物理'))
-        layout.addWidget(QCheckBox('高数'))
-
-        #设置小标题与布局方式
-        self.setTabText(2,'教育程度')
-        self.tab3.setLayout(layout)
-
 class SearchWindow(QWidget):
     def __init__(self, parent=None):
         super(SearchWindow, self).__init__(parent)
@@ -168,7 +162,7 @@ class SearchWindow(QWidget):
         self.tab = TabSearch()
         hlayout = QHBoxLayout()
         self.listWidget = QListWidget()
-        self.textEdit = QTextEdit()
+        self.textEdit = QPlainTextEdit()
 
         self.buttonStart = QPushButton('开始')
         self.buttonSave = QPushButton('存盘')
@@ -267,25 +261,30 @@ class SearchWindow(QWidget):
         return command_list
 
     def on_search(self):
+
         index = self.tab.currentIndex()
 
         if index == 0:
             self.on_tab1()
         elif index == 1:
             command_list = self.get_search_list()
-
+            print(command_list)
             if len(command_list) > 0:
                 thread = threading.Thread(target=search_func, args=(command_list,))
                 thread.start()
             else:
                 print("empty command")
 
+            self.upd_server = QUdpServer()
+            self.upd_server.signal.connect(self.slot_udp)
+            self.upd_server.start()
+
     def on_tab1(self):
         preburst_day_count = int(self.tab.comBox1.currentText())
         start_day_off = int(self.tab.comBox2.currentText())
         end_day_off = int(self.tab.comBox3.currentText())
         exec_string = """ """
-        self.textEdit.setText("pre {} from {} to {}".format(preburst_day_count, start_day_off, end_day_off))
+        self.textEdit.setPlainText("pre {} from {} to {}".format(preburst_day_count, start_day_off, end_day_off))
         command_dic = {
                    "command": "counting_break_upper_band_after_n",
                    "start_offset": start_day_off,
@@ -293,16 +292,25 @@ class SearchWindow(QWidget):
                    "num":  preburst_day_count
         }
 
-        thread = QWorkerTread(command_list = [command_dic])
-        thread.signal.connect(self.log_search)
-        thread.run()
+        self.thread = QWorkerTread(command_list = [command_dic])
+        self.thread.signal.connect(self.log_search)
+        self.thread.start()
 
 
     def log_search(self, string):
-        self.textEdit.setText(string)
+        #print(string)
+        self.textEdit.setPlainText(string)
 
     def closeEvent(self, event):
         print("X is clicked")
+
+    def slot_udp(self, str):
+        df = pd.read_json(str, orient='index', dtype='object')
+        self.table = PandasWidget(df)
+        self.table.resize(800, 600)
+        self.table.show()
+
+        #self.textEdit.setPlainText(str)
 
 
 if __name__ == '__main__':

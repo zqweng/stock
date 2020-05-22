@@ -27,12 +27,12 @@ class StockCompleter(QWidget):
         self.stock_combobox = QComboBox(self, minimumWidth=200)
         self.stock_combobox.setEditable(True)
 
-        self.list_combobox = QComboBox(self, minimumWidth=200)
-        self.list_combobox.setEditable(True)
+        #self.list_combobox = QComboBox(self, minimumWidth=200)
+        #self.list_combobox.setEditable(True)
 
         layout.addItem(QSpacerItem(20, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
-        layout.addWidget(QLabel("名单选项", self))
-        layout.addWidget(self.list_combobox)
+        #layout.addWidget(QLabel("名单选项", self))
+        #layout.addWidget(self.list_combobox)
         layout.addWidget(QLabel("股票名单", self))
         layout.addWidget(self.stock_combobox)
 
@@ -41,7 +41,7 @@ class StockCompleter(QWidget):
 
         #增加选中事件
         self.stock_combobox.activated.connect(self.on_stock_combobox_Activate)
-        self.list_combobox.activated.connect(self.on_list_combobox_Activate)
+        #self.list_combobox.activated.connect(self.on_list_combobox_Activate)
 
         self.canvas = canvas
 
@@ -51,9 +51,11 @@ class StockCompleter(QWidget):
             self.stock_combobox.addItem(items_list[i])
         self.stock_combobox.setCurrentIndex(-1)
 
+        """
         for i in range(len(list_list)):
             self.list_combobox.addItem(list_list[i])
         self.list_combobox.setCurrentIndex(-1)
+        """
 
         # 增加自动补全
         completer = QCompleter(items_list)
@@ -62,12 +64,13 @@ class StockCompleter(QWidget):
         self.stock_combobox.setCompleter(completer)
         self.curindex_stock_combobox = self.stock_combobox.currentIndex()
 
+        """
         completer = QCompleter(list_list)
         completer.setFilterMode(Qt.MatchContains)
         completer.setCompletionMode(QCompleter.PopupCompletion)
         self.list_combobox.setCompleter(completer)
         self.curindex_list_combobox = self.list_combobox.currentIndex()
-
+        """
 
     def on_stock_combobox_Activate(self, index):
         print(self.stock_combobox.count())
@@ -83,6 +86,7 @@ class StockCompleter(QWidget):
         self.canvas.set_new_code(code, name)
 
     def on_list_combobox_Activate(self, index):
+        """
         print(self.list_combobox.count())
         print(self.list_combobox.currentIndex())
         print(self.list_combobox.currentText())
@@ -91,7 +95,7 @@ class StockCompleter(QWidget):
         print(self.list_combobox.itemText(self.list_combobox.currentIndex()))
         print(self.list_combobox.itemText(index))
 
-        """
+
         curidx = self.list_combobox.currentIndex()
         if self.curindex_list_combobox != curidx:
             pdb.set_trace()
