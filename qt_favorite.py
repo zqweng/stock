@@ -73,7 +73,7 @@ class FavoriteTable(QTableWidget):
 
     def __del__(self):
         print('Destructor called, Employee deleted.')
-        self.thread.stop()
+
 
 
 
@@ -131,7 +131,8 @@ class FavoriteWindow(QWidget):
                 df_new = df_new.drop(columns="Unnamed: 0")
                 df_new.to_csv("mystocklist_detail.csv")
 
-
+    def __del__(self):
+        self.thread.stop()
 
 
 
